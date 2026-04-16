@@ -1,0 +1,31 @@
+{
+  "scenario_id": "inventory_discrepancy",
+  "name": "Inventory Discrepancy",
+  "description": "WMS stock count does not match physical pick-bin quantity. The AI recommends proceeding based on system data; the human must decide whether to trust the count, verify, or pull from reserve.",
+  "severity": "medium",
+  "disruption_type": "inventory_accuracy",
+  "affected_entities": ["WH_1"],
+  "entity_patches": [
+    {
+      "entity_type": "warehouse",
+      "entity_id": "WH_1",
+      "op": "add",
+      "field": "current_inventory",
+      "value": -20,
+      "_note": "Simulates ~17% pick-bin shrinkage discovered at cycle count (baseline 120 -> 100)"
+    }
+  ],
+  "variable_changes": {
+    "WH_1": {
+      "current_inventory_note": "Count accuracy in question; system shows available stock but physical verification may differ"
+    }
+  },
+  "weather_fallback": "No weather dependency. This scenario is internal warehouse operations only.",
+  "weather_location": null,
+  "difficulty_notes": "Key decision factor: age of last count and historical variance rate. Low-variance fresh counts favour AI approval.",
+  "_notes": [
+    "Canonical mapping: Inventory Discrepancy -> inventory_discrepancy",
+    "Weather coordinates unavailable; fallback-only mode used",
+    "entity_patches is the authoritative delta source; variable_changes is narrative context only"
+  ]
+}

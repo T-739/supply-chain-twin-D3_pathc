@@ -1,0 +1,90 @@
+{
+  "timestamp": "2026-04-01T09:00:00Z",
+  "suppliers": [
+    {
+      "id": "SUP_1",
+      "name": "Shenzhen Apparel Co.",
+      "lead_time_days": 5,
+      "reliability_score": 0.95,
+      "capacity_units": 400,
+      "is_active": true
+    },
+    {
+      "id": "SUP_2",
+      "name": "Guangzhou Backup Co.",
+      "lead_time_days": 8,
+      "reliability_score": 0.88,
+      "capacity_units": 250,
+      "is_active": true
+    }
+  ],
+  "warehouses": [
+    {
+      "id": "WH_1",
+      "name": "Montreal DC",
+      "location": "Montreal",
+      "max_capacity": 500,
+      "current_inventory": 120,
+      "operating_cost_per_unit": 0.5
+    },
+    {
+      "id": "WH_2",
+      "name": "Toronto DC",
+      "location": "Toronto",
+      "max_capacity": 450,
+      "current_inventory": 90,
+      "operating_cost_per_unit": 0.8
+    }
+  ],
+  "carriers": [
+    {
+      "id": "CR_1",
+      "name": "StandardGround",
+      "available": true,
+      "cost_per_unit": 3.0,
+      "transit_time_hours": 36,
+      "capacity_limit": 100
+    },
+    {
+      "id": "CR_2",
+      "name": "ExpressAir",
+      "available": true,
+      "cost_per_unit": 6.0,
+      "transit_time_hours": 18,
+      "capacity_limit": 60
+    }
+  ],
+  "customer_zones": [
+    {
+      "id": "CZ_1",
+      "name": "Quebec Urban",
+      "demand_units": 10,
+      "sla_deadline_hours": 24,
+      "sla_penalty_per_hour": 5.0
+    },
+    {
+      "id": "CZ_2",
+      "name": "Ontario Key Accounts",
+      "demand_units": 8,
+      "sla_deadline_hours": 18,
+      "sla_penalty_per_hour": 8.0
+    }
+  ],
+  "active_order": {
+    "order_id": "ORD_BASE_001",
+    "order_units": 10,
+    "source_warehouse_id": "WH_1",
+    "customer_zone_id": "CZ_1",
+    "planned_carrier_id": "CR_1",
+    "planned_eta_hours": 36
+  },
+  "cost_policy": {
+    "expedite_multiplier": 2.0,
+    "transfer_fixed_fee": 30.0,
+    "transfer_unit_cost": 1.5,
+    "default_compensation_per_unit": 4.0,
+    "default_penalty_relief_per_hour": 1.5,
+    "verify_review_overhead": 140.0
+  },
+  "current_disruptions": []
+}

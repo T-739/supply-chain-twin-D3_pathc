@@ -1,0 +1,169 @@
+{
+  "case_id": "M08",
+  "block_type": "main",
+  "recommended_order": 8,
+  "scenario_type": "Resource Allocation",
+  "scenario_id": "warehouse_capacity_or_equipment_issue",
+  "scenario_config_ref": "data/scenarios/warehouse_capacity_or_equipment_issue.json",
+  "risk_level": "HIGH",
+  "service_stringency": "SLA Contract",
+  "complexity_score": 4,
+  "ai_correct": false,
+  "oracle": {
+    "action_code": "ALT1",
+    "action_label": "Verify",
+    "cost_total": 260
+  },
+  "agent_recommendation_action_code": "AI",
+  "order_or_shipment_id": "RA-7488",
+  "case_title": "Second SLA line may not have the required document template",
+  "exception_description": "Wave RA-7488 contains 20 contractual SLA orders. AI recommends splitting the work across two pack lines because a temporary crew has arrived, but the second line has not confirmed the required documentation template. The AI still proposes immediate release.",
+  "layer1_visible": "Wave RA-7488 contains 20 contractual SLA orders. AI recommends splitting the work across two pack lines because a temporary crew has arrived, but the second line has not confirmed the required documentation template. The AI still proposes immediate release.",
+  "detail_expand": "If the template or printer mapping is wrong, the full SLA wave must be reopened and reprinted. Holding everything on the primary line is slower, yet still feasible if checked early. The case is intentionally high stakes: verifying line readiness is costly, but failure under an SLA contract is much worse.",
+  "ai_recommendation": "AI recommends using both lines immediately because visible labor capacity is available and queue time is currently the largest bottleneck.",
+  "decision_options": [
+    {
+      "action_code": "AI",
+      "decision_type": "approve",
+      "action_label": "Release SLA wave across both lines now"
+    },
+    {
+      "action_code": "ALT1",
+      "decision_type": "verify_pause",
+      "action_label": "Pause to verify template, printer, and crew readiness"
+    },
+    {
+      "action_code": "ALT2",
+      "decision_type": "alternative_plan",
+      "action_label": "Keep the full wave on the primary line only"
+    }
+  ],
+  "cost_ground_truth": {
+    "AI": {
+      "c_direct": 100,
+      "c_outcome": 420,
+      "c_total": 520
+    },
+    "ALT1": {
+      "c_direct": 140,
+      "c_outcome": 120,
+      "c_total": 260
+    },
+    "ALT2": {
+      "c_direct": 160,
+      "c_outcome": 160,
+      "c_total": 320
+    }
+  },
+  "initial_state_snapshot": {
+    "timestamp": "2026-03-01T09:00:00Z",
+    "suppliers": [
+      {
+        "id": "SUP_1",
+        "name": "Primary Supplier",
+        "lead_time_days": 5,
+        "reliability_score": 0.92,
+        "capacity_units": 500,
+        "is_active": true
+      },
+      {
+        "id": "SUP_2",
+        "name": "Backup Supplier",
+        "lead_time_days": 9,
+        "reliability_score": 0.8,
+        "capacity_units": 200,
+        "is_active": true
+      }
+    ],
+    "warehouses": [
+      {
+        "id": "WH_1",
+        "name": "Primary Warehouse",
+        "location": "Montreal",
+        "max_capacity": 1000,
+        "current_inventory": 300,
+        "operating_cost_per_unit": 1.0
+      },
+      {
+        "id": "WH_2",
+        "name": "Reserve Warehouse",
+        "location": "Toronto",
+        "max_capacity": 600,
+        "current_inventory": 150,
+        "operating_cost_per_unit": 1.5
+      }
+    ],
+    "carriers": [
+      {
+        "id": "CR_1",
+        "name": "Primary Carrier",
+        "available": true,
+        "cost_per_unit": 5.0,
+        "transit_time_hours": 24,
+        "capacity_limit": 200
+      },
+      {
+        "id": "CR_2",
+        "name": "Express Carrier",
+        "available": true,
+        "cost_per_unit": 12.0,
+        "transit_time_hours": 8,
+        "capacity_limit": 80
+      }
+    ],
+    "customer_zones": [
+      {
+        "id": "CZ_1",
+        "name": "Standard Customer Zone",
+        "demand_units": 20,
+        "sla_deadline_hours": 48,
+        "sla_penalty_per_hour": 5.0
+      },
+      {
+        "id": "CZ_2",
+        "name": "Key Account Zone",
+        "demand_units": 10,
+        "sla_deadline_hours": 24,
+        "sla_penalty_per_hour": 10.0
+      }
+    ],
+    "current_disruptions": [
+      {
+        "type": "warehouse_resource",
+        "description": "Pick station or scanner may be offline; throughput partially constrained",
+        "affected_entity": "WH_1"
+      }
+    ]
+  },
+  "evaluation_metadata": {
+    "second_best_cost": 320,
+    "oracle_gap_points": 60,
+    "ambiguity_gap_pct": 0.23076923076923078,
+    "ratio_2nd_best": 1.2307692307692308,
+    "error_direction": "Type II",
+    "action_reversibility": "Partially Reversible"
+  },
+  "traceability_text": {
+    "trace_rationale_short": "Extra capacity helps only if the second line is truly configured for the contractual wave.",
+    "trace_key1": "Wave size=20",
+    "trace_key2": "Doc template=Unconfirmed",
+    "trace_key3": "SLA rework risk=High",
+    "trace_more": "Audit log stores line ID, template version, readiness evidence, and final action.",
+    "uncertainty_trigger1": "Temporary crew just arrived",
+    "uncertainty_trigger2": "Line-2 template not confirmed for SLA docs",
+    "recommended_check": "Check line-2 template version, printer map, and crew login before release."
+  },
+  "feedback_text": {
+    "feedback_ai_outcome": "Line 2 was not ready, so immediate release caused SLA reprint, re-open, and delay penalties.",
+    "feedback_alt1_outcome": "The readiness check caught the issue and kept the rework loss contained, even though the pause added cost.",
+    "feedback_alt2_outcome": "Keeping all work on the primary line was safe, but slower and more expensive than a targeted readiness check first."
+  },
+  "metadata": {
+    "ground_truth_source": "TianshiWang_Redesigned_Scenario_Bank_v3.csv",
+    "snapshot_policy": "baseline_plus_scenario_delta",
+    "notes": [
+      "Canonical scenario mapping: 'Resource Allocation' -> 'warehouse_capacity_or_equipment_issue'",
+      "initial_state_snapshot built from baseline_plus_scenario_delta; NOT the oracle truth source"
+    ]
+  }
+}

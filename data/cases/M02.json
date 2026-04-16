@@ -1,0 +1,169 @@
+{
+  "case_id": "M02",
+  "block_type": "main",
+  "recommended_order": 2,
+  "scenario_type": "Inventory Discrepancy",
+  "scenario_id": "inventory_discrepancy",
+  "scenario_config_ref": "data/scenarios/inventory_discrepancy.json",
+  "risk_level": "LOW",
+  "service_stringency": "Promised-date",
+  "complexity_score": 3,
+  "ai_correct": false,
+  "oracle": {
+    "action_code": "ALT2",
+    "action_label": "Alternative",
+    "cost_total": 120
+  },
+  "agent_recommendation_action_code": "AI",
+  "order_or_shipment_id": "WH-5904",
+  "case_title": "Flash-sale sync lag on a tight customer promise",
+  "exception_description": "Order WH-5904 promised for tonight requires 6 units of SKU TEE-09. WMS shows 9 units in the pick face, but the last count was 6 hours ago and outbound scans surged after a flash sale. AI recommends shipping from current stock.",
+  "layer1_visible": "Order WH-5904 promised for tonight requires 6 units of SKU TEE-09. WMS shows 9 units in the pick face, but the last count was 6 hours ago and outbound scans surged after a flash sale. AI recommends shipping from current stock.",
+  "detail_expand": "Confirmed reserve stock sits in zone B, though pulling it adds handling and an internal replenishment move. The customer promise is tight but still recoverable if acted on now. Because the visible stock number still looks sufficient, the case tests whether participants notice that recent transaction noise can make the standard path fragile.",
+  "ai_recommendation": "AI recommends using the current pick face because the system quantity covers demand and avoids the extra handling of a reserve pull.",
+  "decision_options": [
+    {
+      "action_code": "AI",
+      "decision_type": "approve",
+      "action_label": "Pack from current pick face"
+    },
+    {
+      "action_code": "ALT1",
+      "decision_type": "verify_pause",
+      "action_label": "Pause to check whether flash-sale scans fully synced"
+    },
+    {
+      "action_code": "ALT2",
+      "decision_type": "alternative_plan",
+      "action_label": "Pull confirmed stock from reserve zone B"
+    }
+  ],
+  "cost_ground_truth": {
+    "AI": {
+      "c_direct": 80,
+      "c_outcome": 180,
+      "c_total": 260
+    },
+    "ALT1": {
+      "c_direct": 140,
+      "c_outcome": 60,
+      "c_total": 200
+    },
+    "ALT2": {
+      "c_direct": 100,
+      "c_outcome": 20,
+      "c_total": 120
+    }
+  },
+  "initial_state_snapshot": {
+    "timestamp": "2026-03-01T09:00:00Z",
+    "suppliers": [
+      {
+        "id": "SUP_1",
+        "name": "Primary Supplier",
+        "lead_time_days": 5,
+        "reliability_score": 0.92,
+        "capacity_units": 500,
+        "is_active": true
+      },
+      {
+        "id": "SUP_2",
+        "name": "Backup Supplier",
+        "lead_time_days": 9,
+        "reliability_score": 0.8,
+        "capacity_units": 200,
+        "is_active": true
+      }
+    ],
+    "warehouses": [
+      {
+        "id": "WH_1",
+        "name": "Primary Warehouse",
+        "location": "Montreal",
+        "max_capacity": 1000,
+        "current_inventory": 300,
+        "operating_cost_per_unit": 1.0
+      },
+      {
+        "id": "WH_2",
+        "name": "Reserve Warehouse",
+        "location": "Toronto",
+        "max_capacity": 600,
+        "current_inventory": 150,
+        "operating_cost_per_unit": 1.5
+      }
+    ],
+    "carriers": [
+      {
+        "id": "CR_1",
+        "name": "Primary Carrier",
+        "available": true,
+        "cost_per_unit": 5.0,
+        "transit_time_hours": 24,
+        "capacity_limit": 200
+      },
+      {
+        "id": "CR_2",
+        "name": "Express Carrier",
+        "available": true,
+        "cost_per_unit": 12.0,
+        "transit_time_hours": 8,
+        "capacity_limit": 80
+      }
+    ],
+    "customer_zones": [
+      {
+        "id": "CZ_1",
+        "name": "Standard Customer Zone",
+        "demand_units": 20,
+        "sla_deadline_hours": 48,
+        "sla_penalty_per_hour": 5.0
+      },
+      {
+        "id": "CZ_2",
+        "name": "Key Account Zone",
+        "demand_units": 10,
+        "sla_deadline_hours": 24,
+        "sla_penalty_per_hour": 10.0
+      }
+    ],
+    "current_disruptions": [
+      {
+        "type": "inventory_accuracy",
+        "description": "WMS stock count may not match physical pick-bin quantity",
+        "affected_entity": "WH_1"
+      }
+    ]
+  },
+  "evaluation_metadata": {
+    "second_best_cost": 200,
+    "oracle_gap_points": 80,
+    "ambiguity_gap_pct": 0.6666666666666666,
+    "ratio_2nd_best": 1.6666666666666667,
+    "error_direction": "Type I",
+    "action_reversibility": "Partially Reversible"
+  },
+  "traceability_text": {
+    "trace_rationale_short": "Visible stock covers demand, but data freshness is weaker than usual under flash-sale activity.",
+    "trace_key1": "Count age=6h",
+    "trace_key2": "Outbound activity=High",
+    "trace_key3": "Reserve zone=Confirmed",
+    "trace_more": "Audit log stores sync timestamp, reserve confirmation, and final action.",
+    "uncertainty_trigger1": "High outbound activity after flash sale",
+    "uncertainty_trigger2": "6-hour-old count on a promised order",
+    "recommended_check": "Check the latest outbound-sync timestamp and reserve availability."
+  },
+  "feedback_text": {
+    "feedback_ai_outcome": "The pick face was short after unsynced outbound scans, so the promised order slipped and required recovery work.",
+    "feedback_alt1_outcome": "The check caught the mismatch, but the pause still delayed release more than an immediate reserve pull would have.",
+    "feedback_alt2_outcome": "Reserve stock protected the promised shipment; the extra handling cost stayed well below the failure path."
+  },
+  "metadata": {
+    "ground_truth_source": "TianshiWang_Redesigned_Scenario_Bank_v3.csv",
+    "snapshot_policy": "baseline_plus_scenario_delta",
+    "notes": [
+      "Canonical scenario mapping: 'Inventory Discrepancy' -> 'inventory_discrepancy'",
+      "initial_state_snapshot built from baseline_plus_scenario_delta; NOT the oracle truth source"
+    ]
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "case_id": "M10",
+  "block_type": "main",
+  "recommended_order": 10,
+  "scenario_type": "Carrier Disruption",
+  "scenario_id": "carrier_disruption",
+  "scenario_config_ref": "data/scenarios/carrier_disruption.json",
+  "risk_level": "HIGH",
+  "service_stringency": "SLA Contract",
+  "complexity_score": 4,
+  "ai_correct": true,
+  "oracle": {
+    "action_code": "AI",
+    "action_label": "Approve",
+    "cost_total": 240
+  },
+  "agent_recommendation_action_code": "AI",
+  "order_or_shipment_id": "CR-8344",
+  "case_title": "Severe disruption, but the control tower still shows a recoverable path",
+  "exception_description": "Shipment CR-8344 serves an SLA account with chargebacks for late handoff. The primary carrier shows a severe disruption, but the latest control-tower update still indicates a recoverable path before the contractual cutoff. AI recommends staying on the current route.",
+  "layer1_visible": "Shipment CR-8344 serves an SLA account with chargebacks for late handoff. The primary carrier shows a severe disruption, but the latest control-tower update still indicates a recoverable path before the contractual cutoff. AI recommends staying on the current route.",
+  "detail_expand": "A premium backup carrier can take the load, yet customs pre-clearance would need to be recreated and the alternate handoff is not guaranteed. Missing the SLA is costly, but switching carriers also introduces major execution friction. The case is intentionally high tension: high risk does not automatically make override correct.",
+  "ai_recommendation": "AI recommends staying on the current carrier because the control-tower forecast still clears the cutoff and a switch requires costly re-clearance with uncertain benefit.",
+  "decision_options": [
+    {
+      "action_code": "AI",
+      "decision_type": "approve",
+      "action_label": "Keep current carrier and monitor route"
+    },
+    {
+      "action_code": "ALT1",
+      "decision_type": "verify_pause",
+      "action_label": "Pause to confirm control-tower ETA and cutoff"
+    },
+    {
+      "action_code": "ALT2",
+      "decision_type": "alternative_plan",
+      "action_label": "Switch to premium backup carrier"
+    }
+  ],
+  "cost_ground_truth": {
+    "AI": {
+      "c_direct": 110,
+      "c_outcome": 130,
+      "c_total": 240
+    },
+    "ALT1": {
+      "c_direct": 140,
+      "c_outcome": 300,
+      "c_total": 440
+    },
+    "ALT2": {
+      "c_direct": 170,
+      "c_outcome": 230,
+      "c_total": 400
+    }
+  },
+  "initial_state_snapshot": {
+    "timestamp": "2026-03-01T09:00:00Z",
+    "suppliers": [
+      {
+        "id": "SUP_1",
+        "name": "Primary Supplier",
+        "lead_time_days": 5,
+        "reliability_score": 0.92,
+        "capacity_units": 500,
+        "is_active": true
+      },
+      {
+        "id": "SUP_2",
+        "name": "Backup Supplier",
+        "lead_time_days": 9,
+        "reliability_score": 0.8,
+        "capacity_units": 200,
+        "is_active": true
+      }
+    ],
+    "warehouses": [
+      {
+        "id": "WH_1",
+        "name": "Primary Warehouse",
+        "location": "Montreal",
+        "max_capacity": 1000,
+        "current_inventory": 300,
+        "operating_cost_per_unit": 1.0
+      },
+      {
+        "id": "WH_2",
+        "name": "Reserve Warehouse",
+        "location": "Toronto",
+        "max_capacity": 600,
+        "current_inventory": 150,
+        "operating_cost_per_unit": 1.5
+      }
+    ],
+    "carriers": [
+      {
+        "id": "CR_1",
+        "name": "Primary Carrier",
+        "available": true,
+        "cost_per_unit": 5.0,
+        "transit_time_hours": 24,
+        "capacity_limit": 200
+      },
+      {
+        "id": "CR_2",
+        "name": "Express Carrier",
+        "available": true,
+        "cost_per_unit": 12.0,
+        "transit_time_hours": 8,
+        "capacity_limit": 80
+      }
+    ],
+    "customer_zones": [
+      {
+        "id": "CZ_1",
+        "name": "Standard Customer Zone",
+        "demand_units": 20,
+        "sla_deadline_hours": 48,
+        "sla_penalty_per_hour": 5.0
+      },
+      {
+        "id": "CZ_2",
+        "name": "Key Account Zone",
+        "demand_units": 10,
+        "sla_deadline_hours": 24,
+        "sla_penalty_per_hour": 10.0
+      }
+    ],
+    "current_disruptions": [
+      {
+        "type": "carrier_availability",
+        "description": "Primary carrier reports a service warning or delay",
+        "affected_entity": "CR_1"
+      }
+    ]
+  },
+  "evaluation_metadata": {
+    "second_best_cost": 400,
+    "oracle_gap_points": 160,
+    "ambiguity_gap_pct": 0.6666666666666666,
+    "ratio_2nd_best": 1.6666666666666667,
+    "error_direction": "—",
+    "action_reversibility": "Partially Reversible"
+  },
+  "traceability_text": {
+    "trace_rationale_short": "A route switch is not free; the existing path remains best if the latest forecast is trusted.",
+    "trace_key1": "Cutoff=Contractual SLA",
+    "trace_key2": "Backup carrier=Re-clearance needed",
+    "trace_key3": "Forecast=Recoverable",
+    "trace_more": "Audit log stores forecast timestamp, carrier option reviewed, and final approval.",
+    "uncertainty_trigger1": "SLA chargeback exposure",
+    "uncertainty_trigger2": "Backup carrier needs customs re-clearance",
+    "recommended_check": "Check the control-tower ETA and re-clearance feasibility before changing carriers."
+  },
+  "feedback_text": {
+    "feedback_ai_outcome": "The original route recovered in time, so the shipment met the SLA without the premium switch.",
+    "feedback_alt1_outcome": "The confirmation step produced the same conclusion, but the added coordination made it more expensive than immediate trust.",
+    "feedback_alt2_outcome": "The backup carrier worked, yet re-clearance and premium fees outweighed its benefit under the actual recovery path."
+  },
+  "metadata": {
+    "ground_truth_source": "TianshiWang_Redesigned_Scenario_Bank_v3.csv",
+    "snapshot_policy": "baseline_plus_scenario_delta",
+    "notes": [
+      "Canonical scenario mapping: 'Carrier Disruption' -> 'carrier_disruption'",
+      "initial_state_snapshot built from baseline_plus_scenario_delta; NOT the oracle truth source"
+    ]
+  }
+}

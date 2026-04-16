@@ -1,0 +1,169 @@
+{
+  "case_id": "P01",
+  "block_type": "practice",
+  "recommended_order": 1,
+  "scenario_type": "Inventory Discrepancy",
+  "scenario_id": "inventory_discrepancy",
+  "scenario_config_ref": "data/scenarios/inventory_discrepancy.json",
+  "risk_level": "LOW",
+  "service_stringency": "Std B2C",
+  "complexity_score": 1,
+  "ai_correct": true,
+  "oracle": {
+    "action_code": "AI",
+    "action_label": "Approve",
+    "cost_total": 80
+  },
+  "agent_recommendation_action_code": "AI",
+  "order_or_shipment_id": "WH-P01-2047",
+  "case_title": "Fresh stock record on a standard SKU",
+  "exception_description": "Order WH-P01-2047 for SKU CHR-18 is due in 4 hours. WMS shows 24 units in the pick bin, the cycle count finished 90 minutes ago, and no abnormal movement has been flagged.",
+  "layer1_visible": "Order WH-P01-2047 for SKU CHR-18 is due in 4 hours. WMS shows 24 units in the pick bin, the cycle count finished 90 minutes ago, and no abnormal movement has been flagged.",
+  "detail_expand": "Reserve stock is available in a nearby location, but pulling from it adds walking and repacking time. The last 7 days show only a 2% variance rate for this SKU. The customer is standard B2C, so avoidable handling is more costly than the small residual risk in this case today.",
+  "ai_recommendation": "AI recommends packing from the current bin because the record is fresh and a reserve pull would add handling without reducing meaningful risk.",
+  "decision_options": [
+    {
+      "action_code": "AI",
+      "decision_type": "approve",
+      "action_label": "Pack from current pick bin"
+    },
+    {
+      "action_code": "ALT1",
+      "decision_type": "verify_pause",
+      "action_label": "Pause to check latest inbound/outbound scans"
+    },
+    {
+      "action_code": "ALT2",
+      "decision_type": "alternative_plan",
+      "action_label": "Pull from reserve location instead"
+    }
+  ],
+  "cost_ground_truth": {
+    "AI": {
+      "c_direct": 40,
+      "c_outcome": 40,
+      "c_total": 80
+    },
+    "ALT1": {
+      "c_direct": 140,
+      "c_outcome": 60,
+      "c_total": 200
+    },
+    "ALT2": {
+      "c_direct": 100,
+      "c_outcome": 120,
+      "c_total": 220
+    }
+  },
+  "initial_state_snapshot": {
+    "timestamp": "2026-03-01T09:00:00Z",
+    "suppliers": [
+      {
+        "id": "SUP_1",
+        "name": "Primary Supplier",
+        "lead_time_days": 5,
+        "reliability_score": 0.92,
+        "capacity_units": 500,
+        "is_active": true
+      },
+      {
+        "id": "SUP_2",
+        "name": "Backup Supplier",
+        "lead_time_days": 9,
+        "reliability_score": 0.8,
+        "capacity_units": 200,
+        "is_active": true
+      }
+    ],
+    "warehouses": [
+      {
+        "id": "WH_1",
+        "name": "Primary Warehouse",
+        "location": "Montreal",
+        "max_capacity": 1000,
+        "current_inventory": 300,
+        "operating_cost_per_unit": 1.0
+      },
+      {
+        "id": "WH_2",
+        "name": "Reserve Warehouse",
+        "location": "Toronto",
+        "max_capacity": 600,
+        "current_inventory": 150,
+        "operating_cost_per_unit": 1.5
+      }
+    ],
+    "carriers": [
+      {
+        "id": "CR_1",
+        "name": "Primary Carrier",
+        "available": true,
+        "cost_per_unit": 5.0,
+        "transit_time_hours": 24,
+        "capacity_limit": 200
+      },
+      {
+        "id": "CR_2",
+        "name": "Express Carrier",
+        "available": true,
+        "cost_per_unit": 12.0,
+        "transit_time_hours": 8,
+        "capacity_limit": 80
+      }
+    ],
+    "customer_zones": [
+      {
+        "id": "CZ_1",
+        "name": "Standard Customer Zone",
+        "demand_units": 20,
+        "sla_deadline_hours": 48,
+        "sla_penalty_per_hour": 5.0
+      },
+      {
+        "id": "CZ_2",
+        "name": "Key Account Zone",
+        "demand_units": 10,
+        "sla_deadline_hours": 24,
+        "sla_penalty_per_hour": 10.0
+      }
+    ],
+    "current_disruptions": [
+      {
+        "type": "inventory_accuracy",
+        "description": "WMS stock count may not match physical pick-bin quantity",
+        "affected_entity": "WH_1"
+      }
+    ]
+  },
+  "evaluation_metadata": {
+    "second_best_cost": 200,
+    "oracle_gap_points": 120,
+    "ambiguity_gap_pct": 1.5,
+    "ratio_2nd_best": 2.5,
+    "error_direction": "—",
+    "action_reversibility": "Reversible"
+  },
+  "traceability_text": {
+    "trace_rationale_short": "Fresh data supports direct execution with minimal friction.",
+    "trace_key1": "Count age=90m",
+    "trace_key2": "WMS stock=24",
+    "trace_key3": "Variance rate=2%",
+    "trace_more": "Audit log stores count timestamp, user approval, and stock snapshot.",
+    "uncertainty_trigger1": "Fresh count (90 min ago)",
+    "uncertainty_trigger2": "Low variance history (2%)",
+    "recommended_check": "Review the last inbound and outbound scan pair in WMS."
+  },
+  "feedback_text": {
+    "feedback_ai_outcome": "The pick-bin record was correct, so the order shipped normally with only routine handling cost.",
+    "feedback_alt1_outcome": "The manual check confirmed the stock, but the verification step consumed labor and time.",
+    "feedback_alt2_outcome": "Reserve stock was available, but the extra travel and repack created needless handling cost."
+  },
+  "metadata": {
+    "ground_truth_source": "TianshiWang_Redesigned_Scenario_Bank_v3.csv",
+    "snapshot_policy": "baseline_plus_scenario_delta",
+    "notes": [
+      "Canonical scenario mapping: 'Inventory Discrepancy' -> 'inventory_discrepancy'",
+      "initial_state_snapshot built from baseline_plus_scenario_delta; NOT the oracle truth source"
+    ]
+  }
+}

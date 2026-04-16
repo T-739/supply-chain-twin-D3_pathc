@@ -1,0 +1,169 @@
+{
+  "case_id": "M09",
+  "block_type": "main",
+  "recommended_order": 9,
+  "scenario_type": "Carrier Disruption",
+  "scenario_id": "carrier_disruption",
+  "scenario_config_ref": "data/scenarios/carrier_disruption.json",
+  "risk_level": "MED",
+  "service_stringency": "Promised-date",
+  "complexity_score": 3,
+  "ai_correct": true,
+  "oracle": {
+    "action_code": "AI",
+    "action_label": "Approve",
+    "cost_total": 180
+  },
+  "agent_recommendation_action_code": "AI",
+  "order_or_shipment_id": "CR-8120",
+  "case_title": "Carrier delay is real, but still inside the promise window",
+  "exception_description": "Shipment CR-8120 is on a promised-date route. The primary carrier reports a 4-hour line-haul delay, but the latest ETA still arrives before the customer promise. AI recommends keeping the existing carrier rather than switching.",
+  "layer1_visible": "Shipment CR-8120 is on a promised-date route. The primary carrier reports a 4-hour line-haul delay, but the latest ETA still arrives before the customer promise. AI recommends keeping the existing carrier rather than switching.",
+  "detail_expand": "Eight cartons are already manifested and staged for the current pickup. Changing carriers would require relabeling and a new pickup slot. No broader network escalation beyond the current delay has been issued. The case tests whether participants can tolerate medium disruption without reflexively overriding the AI on limited evidence this time.",
+  "ai_recommendation": "AI recommends keeping the existing carrier because the promise window remains intact and switching creates avoidable relabeling and pickup cost.",
+  "decision_options": [
+    {
+      "action_code": "AI",
+      "decision_type": "approve",
+      "action_label": "Keep current carrier and release shipment"
+    },
+    {
+      "action_code": "ALT1",
+      "decision_type": "verify_pause",
+      "action_label": "Pause to confirm ETA and pickup window"
+    },
+    {
+      "action_code": "ALT2",
+      "decision_type": "alternative_plan",
+      "action_label": "Switch to backup carrier and reroute"
+    }
+  ],
+  "cost_ground_truth": {
+    "AI": {
+      "c_direct": 80,
+      "c_outcome": 100,
+      "c_total": 180
+    },
+    "ALT1": {
+      "c_direct": 140,
+      "c_outcome": 180,
+      "c_total": 320
+    },
+    "ALT2": {
+      "c_direct": 140,
+      "c_outcome": 220,
+      "c_total": 360
+    }
+  },
+  "initial_state_snapshot": {
+    "timestamp": "2026-03-01T09:00:00Z",
+    "suppliers": [
+      {
+        "id": "SUP_1",
+        "name": "Primary Supplier",
+        "lead_time_days": 5,
+        "reliability_score": 0.92,
+        "capacity_units": 500,
+        "is_active": true
+      },
+      {
+        "id": "SUP_2",
+        "name": "Backup Supplier",
+        "lead_time_days": 9,
+        "reliability_score": 0.8,
+        "capacity_units": 200,
+        "is_active": true
+      }
+    ],
+    "warehouses": [
+      {
+        "id": "WH_1",
+        "name": "Primary Warehouse",
+        "location": "Montreal",
+        "max_capacity": 1000,
+        "current_inventory": 300,
+        "operating_cost_per_unit": 1.0
+      },
+      {
+        "id": "WH_2",
+        "name": "Reserve Warehouse",
+        "location": "Toronto",
+        "max_capacity": 600,
+        "current_inventory": 150,
+        "operating_cost_per_unit": 1.5
+      }
+    ],
+    "carriers": [
+      {
+        "id": "CR_1",
+        "name": "Primary Carrier",
+        "available": true,
+        "cost_per_unit": 5.0,
+        "transit_time_hours": 24,
+        "capacity_limit": 200
+      },
+      {
+        "id": "CR_2",
+        "name": "Express Carrier",
+        "available": true,
+        "cost_per_unit": 12.0,
+        "transit_time_hours": 8,
+        "capacity_limit": 80
+      }
+    ],
+    "customer_zones": [
+      {
+        "id": "CZ_1",
+        "name": "Standard Customer Zone",
+        "demand_units": 20,
+        "sla_deadline_hours": 48,
+        "sla_penalty_per_hour": 5.0
+      },
+      {
+        "id": "CZ_2",
+        "name": "Key Account Zone",
+        "demand_units": 10,
+        "sla_deadline_hours": 24,
+        "sla_penalty_per_hour": 10.0
+      }
+    ],
+    "current_disruptions": [
+      {
+        "type": "carrier_availability",
+        "description": "Primary carrier reports a service warning or delay",
+        "affected_entity": "CR_1"
+      }
+    ]
+  },
+  "evaluation_metadata": {
+    "second_best_cost": 320,
+    "oracle_gap_points": 140,
+    "ambiguity_gap_pct": 0.7777777777777778,
+    "ratio_2nd_best": 1.7777777777777777,
+    "error_direction": "—",
+    "action_reversibility": "Partially Reversible"
+  },
+  "traceability_text": {
+    "trace_rationale_short": "The route is disrupted, but still viable inside the promised window.",
+    "trace_key1": "Delay≈4h",
+    "trace_key2": "Promise type=Promised date",
+    "trace_key3": "Backup carrier=Surcharge",
+    "trace_more": "Audit log stores carrier update time, route choice, and manifest status.",
+    "uncertainty_trigger1": "4-hour carrier delay",
+    "uncertainty_trigger2": "Promise window still intact",
+    "recommended_check": "Check latest ETA refresh and pickup cutoff in TMS."
+  },
+  "feedback_text": {
+    "feedback_ai_outcome": "The updated ETA still met the promise, so keeping the original carrier stayed cheapest overall.",
+    "feedback_alt1_outcome": "The check confirmed the same ETA, but the pause added coordination and holding cost.",
+    "feedback_alt2_outcome": "The reroute protected the shipment, but the premium switch was unnecessary under the actual ETA."
+  },
+  "metadata": {
+    "ground_truth_source": "TianshiWang_Redesigned_Scenario_Bank_v3.csv",
+    "snapshot_policy": "baseline_plus_scenario_delta",
+    "notes": [
+      "Canonical scenario mapping: 'Carrier Disruption' -> 'carrier_disruption'",
+      "initial_state_snapshot built from baseline_plus_scenario_delta; NOT the oracle truth source"
+    ]
+  }
+}

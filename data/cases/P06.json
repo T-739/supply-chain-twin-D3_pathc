@@ -1,0 +1,169 @@
+{
+  "case_id": "P06",
+  "block_type": "practice",
+  "recommended_order": 6,
+  "scenario_type": "SLA Pressure",
+  "scenario_id": "sla_pressure",
+  "scenario_config_ref": "data/scenarios/sla_pressure.json",
+  "risk_level": "HIGH",
+  "service_stringency": "SLA Contract",
+  "complexity_score": 3,
+  "ai_correct": true,
+  "oracle": {
+    "action_code": "AI",
+    "action_label": "Approve",
+    "cost_total": 200
+  },
+  "agent_recommendation_action_code": "AI",
+  "order_or_shipment_id": "SLA-P06-7316",
+  "case_title": "High-risk case where trusting AI is still correct",
+  "exception_description": "Order SLA-P06-7316 must be handed to the outbound dock within 55 minutes to avoid an OTIF failure. The standard gate queue is long, but the live forecast still shows the pallet clearing in time. AI recommends staying on the standard path.",
+  "layer1_visible": "Order SLA-P06-7316 must be handed to the outbound dock within 55 minutes to avoid an OTIF failure. The standard gate queue is long, but the live forecast still shows the pallet clearing in time. AI recommends staying on the standard path.",
+  "detail_expand": "A fast lane is available, but using it requires supervisor coordination and disrupts a live cross-dock wave. The customer is under a contractual SLA, so the stakes are high. Even so, moving now creates premium handling with little expected benefit if the forecast holds through release time this hour smoothly.",
+  "ai_recommendation": "AI recommends staying on the standard gate because the current forecast still meets the cutoff and the fast lane adds substantial execution cost.",
+  "decision_options": [
+    {
+      "action_code": "AI",
+      "decision_type": "approve",
+      "action_label": "Stay on standard outbound path"
+    },
+    {
+      "action_code": "ALT1",
+      "decision_type": "verify_pause",
+      "action_label": "Pause to confirm live queue forecast"
+    },
+    {
+      "action_code": "ALT2",
+      "decision_type": "alternative_plan",
+      "action_label": "Move pallet to fast lane now"
+    }
+  ],
+  "cost_ground_truth": {
+    "AI": {
+      "c_direct": 110,
+      "c_outcome": 90,
+      "c_total": 200
+    },
+    "ALT1": {
+      "c_direct": 140,
+      "c_outcome": 260,
+      "c_total": 400
+    },
+    "ALT2": {
+      "c_direct": 160,
+      "c_outcome": 220,
+      "c_total": 380
+    }
+  },
+  "initial_state_snapshot": {
+    "timestamp": "2026-03-01T09:00:00Z",
+    "suppliers": [
+      {
+        "id": "SUP_1",
+        "name": "Primary Supplier",
+        "lead_time_days": 5,
+        "reliability_score": 0.92,
+        "capacity_units": 500,
+        "is_active": true
+      },
+      {
+        "id": "SUP_2",
+        "name": "Backup Supplier",
+        "lead_time_days": 9,
+        "reliability_score": 0.8,
+        "capacity_units": 200,
+        "is_active": true
+      }
+    ],
+    "warehouses": [
+      {
+        "id": "WH_1",
+        "name": "Primary Warehouse",
+        "location": "Montreal",
+        "max_capacity": 1000,
+        "current_inventory": 300,
+        "operating_cost_per_unit": 1.0
+      },
+      {
+        "id": "WH_2",
+        "name": "Reserve Warehouse",
+        "location": "Toronto",
+        "max_capacity": 600,
+        "current_inventory": 150,
+        "operating_cost_per_unit": 1.5
+      }
+    ],
+    "carriers": [
+      {
+        "id": "CR_1",
+        "name": "Primary Carrier",
+        "available": true,
+        "cost_per_unit": 5.0,
+        "transit_time_hours": 24,
+        "capacity_limit": 200
+      },
+      {
+        "id": "CR_2",
+        "name": "Express Carrier",
+        "available": true,
+        "cost_per_unit": 12.0,
+        "transit_time_hours": 8,
+        "capacity_limit": 80
+      }
+    ],
+    "customer_zones": [
+      {
+        "id": "CZ_1",
+        "name": "Standard Customer Zone",
+        "demand_units": 20,
+        "sla_deadline_hours": 48,
+        "sla_penalty_per_hour": 5.0
+      },
+      {
+        "id": "CZ_2",
+        "name": "Key Account Zone",
+        "demand_units": 10,
+        "sla_deadline_hours": 24,
+        "sla_penalty_per_hour": 10.0
+      }
+    ],
+    "current_disruptions": [
+      {
+        "type": "sla_time_pressure",
+        "description": "Outbound order faces a tight SLA window; standard flow marginally clears deadline",
+        "affected_entity": "CZ_2"
+      }
+    ]
+  },
+  "evaluation_metadata": {
+    "second_best_cost": 380,
+    "oracle_gap_points": 180,
+    "ambiguity_gap_pct": 0.9,
+    "ratio_2nd_best": 1.9,
+    "error_direction": "—",
+    "action_reversibility": "Partially Reversible"
+  },
+  "traceability_text": {
+    "trace_rationale_short": "The standard path still clears on time according to the live dock forecast.",
+    "trace_key1": "Cutoff=55m",
+    "trace_key2": "Fast lane=Available",
+    "trace_key3": "Forecast source=Live dock model",
+    "trace_more": "Audit log stores forecast timestamp, cutoff rule, and gate choice.",
+    "uncertainty_trigger1": "OTIF window=55 minutes",
+    "uncertainty_trigger2": "Fast lane would disrupt another wave",
+    "recommended_check": "Check the latest queue forecast and dock-release timestamp."
+  },
+  "feedback_text": {
+    "feedback_ai_outcome": "The standard gate cleared in time, so the contractual shipment moved at the lowest total cost.",
+    "feedback_alt1_outcome": "The forecast check confirmed the same outcome, but the pause consumed scarce buffer time and labor.",
+    "feedback_alt2_outcome": "The fast lane worked, but the premium handling and disruption cost outweighed its benefit."
+  },
+  "metadata": {
+    "ground_truth_source": "TianshiWang_Redesigned_Scenario_Bank_v3.csv",
+    "snapshot_policy": "baseline_plus_scenario_delta",
+    "notes": [
+      "Canonical scenario mapping: 'SLA Pressure' -> 'sla_pressure'",
+      "initial_state_snapshot built from baseline_plus_scenario_delta; NOT the oracle truth source"
+    ]
+  }
+}

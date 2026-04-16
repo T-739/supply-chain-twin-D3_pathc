@@ -1,0 +1,43 @@
+{
+  "scenario_id": "warehouse_capacity_or_equipment_issue",
+  "name": "Warehouse Resource Allocation / Equipment Issue",
+  "description": "A temporary bottleneck at the primary warehouse: a pick station may not be ready, a scanner is offline, or labour is constrained. The AI may recommend a workaround using existing resources. The human decides whether to trust the AI plan, pause to verify readiness, or redirect to an alternative resource.",
+  "severity": "high",
+  "disruption_type": "warehouse_resource",
+  "affected_entities": ["WH_1", "WH_2"],
+  "entity_patches": [
+    {
+      "entity_type": "warehouse",
+      "entity_id": "WH_1",
+      "op": "add",
+      "field": "max_capacity",
+      "value": -150,
+      "_note": "Effective usable capacity reduced due to offline pick station (baseline 500 -> 350 units)"
+    },
+    {
+      "entity_type": "warehouse",
+      "entity_id": "WH_1",
+      "op": "add",
+      "field": "operating_cost_per_unit",
+      "value": 0.5,
+      "_note": "Rework / workaround handling cost increment (baseline 0.5 -> 1.0 per unit)"
+    }
+  ],
+  "variable_changes": {
+    "WH_1": {
+      "equipment_status_note": "One pick station or scanner may be offline; throughput partially constrained",
+      "operating_cost_per_unit_delta": "+0.5 (estimated rework cost)"
+    },
+    "WH_2": {
+      "role_note": "Backup location available if primary station is fully unavailable"
+    }
+  },
+  "weather_fallback": "No weather dependency. Internal warehouse operations scenario.",
+  "weather_location": null,
+  "difficulty_notes": "High-risk cases test whether the human correctly identifies that the AI's workaround plan is still valid despite the equipment constraint.",
+  "_notes": [
+    "Canonical mapping: Resource Allocation -> warehouse_capacity_or_equipment_issue",
+    "Weather coordinates unavailable; fallback-only mode used",
+    "entity_patches is the authoritative delta source; variable_changes is narrative context only"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "scenario_id": "split_vs_hold",
+  "name": "Split vs Hold",
+  "description": "A multi-item order has components ready at different times or locations. The AI recommends holding the shipment until all items are available to consolidate into one parcel. The human must decide whether to trust the consolidation plan, split and ship the ready item now, or investigate readiness.",
+  "severity": "medium",
+  "disruption_type": "order_fulfillment_split",
+  "affected_entities": ["WH_1", "WH_2", "CZ_1"],
+  "entity_patches": [
+    {
+      "entity_type": "warehouse",
+      "entity_id": "WH_1",
+      "op": "add",
+      "field": "current_inventory",
+      "value": -30,
+      "_note": "Partial zone unavailability: second item not yet at pick face (baseline 120 -> 90 units)"
+    }
+  ],
+  "variable_changes": {
+    "WH_1": {
+      "consolidation_note": "One item is ready at pick face; second item expected to arrive later today from a different zone"
+    },
+    "WH_2": {
+      "role_note": "May hold component items from a secondary zone pending consolidation"
+    }
+  },
+  "weather_fallback": "No weather dependency. Split vs Hold is a fulfillment planning scenario.",
+  "weather_location": null,
+  "difficulty_notes": "AI consolidation plan saves parcel cost but requires the second item to arrive on time. Key risk: if the second item is delayed beyond the same-day window, holding creates a missed-day penalty worse than the split surcharge.",
+  "_notes": [
+    "Canonical mapping: Split vs Hold -> split_vs_hold",
+    "Weather coordinates unavailable; fallback-only mode used",
+    "entity_patches is the authoritative delta source; variable_changes is narrative context only"
+  ]
+}

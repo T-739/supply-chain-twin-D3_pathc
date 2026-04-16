@@ -1,0 +1,169 @@
+{
+  "case_id": "M03",
+  "block_type": "main",
+  "recommended_order": 3,
+  "scenario_type": "Inventory Discrepancy",
+  "scenario_id": "inventory_discrepancy",
+  "scenario_config_ref": "data/scenarios/inventory_discrepancy.json",
+  "risk_level": "MED",
+  "service_stringency": "Promised-date",
+  "complexity_score": 3,
+  "ai_correct": false,
+  "oracle": {
+    "action_code": "ALT1",
+    "action_label": "Verify",
+    "cost_total": 200
+  },
+  "agent_recommendation_action_code": "AI",
+  "order_or_shipment_id": "WH-6113",
+  "case_title": "Location relabel may not be fully synchronized",
+  "exception_description": "Order WH-6113 promised for tomorrow contains a newly re-slotted SKU. WMS shows 11 units, but the last physical count was 18 hours ago and the bin location changed during the night shift. AI recommends shipping from current stock.",
+  "layer1_visible": "Order WH-6113 promised for tomorrow contains a newly re-slotted SKU. WMS shows 11 units, but the last physical count was 18 hours ago and the bin location changed during the night shift. AI recommends shipping from current stock.",
+  "detail_expand": "There has been no unusual outbound spike, yet the slotting update may not have fully synchronized across picking and replenishment screens. Reserve stock exists, but pulling it creates avoidable walking and later balancing work. This case is meant to make a verification step look costly upfront while still being the best total-cost response.",
+  "ai_recommendation": "AI recommends shipping from the current location because the on-hand quantity still covers demand and reserve handling is unnecessary if the move synced correctly.",
+  "decision_options": [
+    {
+      "action_code": "AI",
+      "decision_type": "approve",
+      "action_label": "Pack from current location"
+    },
+    {
+      "action_code": "ALT1",
+      "decision_type": "verify_pause",
+      "action_label": "Pause to verify slot-change sync and latest bin scan"
+    },
+    {
+      "action_code": "ALT2",
+      "decision_type": "alternative_plan",
+      "action_label": "Pick from reserve location immediately"
+    }
+  ],
+  "cost_ground_truth": {
+    "AI": {
+      "c_direct": 80,
+      "c_outcome": 270,
+      "c_total": 350
+    },
+    "ALT1": {
+      "c_direct": 140,
+      "c_outcome": 60,
+      "c_total": 200
+    },
+    "ALT2": {
+      "c_direct": 130,
+      "c_outcome": 150,
+      "c_total": 280
+    }
+  },
+  "initial_state_snapshot": {
+    "timestamp": "2026-03-01T09:00:00Z",
+    "suppliers": [
+      {
+        "id": "SUP_1",
+        "name": "Primary Supplier",
+        "lead_time_days": 5,
+        "reliability_score": 0.92,
+        "capacity_units": 500,
+        "is_active": true
+      },
+      {
+        "id": "SUP_2",
+        "name": "Backup Supplier",
+        "lead_time_days": 9,
+        "reliability_score": 0.8,
+        "capacity_units": 200,
+        "is_active": true
+      }
+    ],
+    "warehouses": [
+      {
+        "id": "WH_1",
+        "name": "Primary Warehouse",
+        "location": "Montreal",
+        "max_capacity": 1000,
+        "current_inventory": 300,
+        "operating_cost_per_unit": 1.0
+      },
+      {
+        "id": "WH_2",
+        "name": "Reserve Warehouse",
+        "location": "Toronto",
+        "max_capacity": 600,
+        "current_inventory": 150,
+        "operating_cost_per_unit": 1.5
+      }
+    ],
+    "carriers": [
+      {
+        "id": "CR_1",
+        "name": "Primary Carrier",
+        "available": true,
+        "cost_per_unit": 5.0,
+        "transit_time_hours": 24,
+        "capacity_limit": 200
+      },
+      {
+        "id": "CR_2",
+        "name": "Express Carrier",
+        "available": true,
+        "cost_per_unit": 12.0,
+        "transit_time_hours": 8,
+        "capacity_limit": 80
+      }
+    ],
+    "customer_zones": [
+      {
+        "id": "CZ_1",
+        "name": "Standard Customer Zone",
+        "demand_units": 20,
+        "sla_deadline_hours": 48,
+        "sla_penalty_per_hour": 5.0
+      },
+      {
+        "id": "CZ_2",
+        "name": "Key Account Zone",
+        "demand_units": 10,
+        "sla_deadline_hours": 24,
+        "sla_penalty_per_hour": 10.0
+      }
+    ],
+    "current_disruptions": [
+      {
+        "type": "inventory_accuracy",
+        "description": "WMS stock count may not match physical pick-bin quantity",
+        "affected_entity": "WH_1"
+      }
+    ]
+  },
+  "evaluation_metadata": {
+    "second_best_cost": 280,
+    "oracle_gap_points": 80,
+    "ambiguity_gap_pct": 0.4,
+    "ratio_2nd_best": 1.4,
+    "error_direction": "Type II",
+    "action_reversibility": "Partially Reversible"
+  },
+  "traceability_text": {
+    "trace_rationale_short": "Current stock may be fine, but sync uncertainty makes a targeted check valuable.",
+    "trace_key1": "Count age=18h",
+    "trace_key2": "Slot change=Night shift",
+    "trace_key3": "Reserve stock=Available",
+    "trace_more": "Audit log stores location-change timestamp, scan history, and supervisor choice.",
+    "uncertainty_trigger1": "Night-shift slot relabel",
+    "uncertainty_trigger2": "18-hour-old count on promised order",
+    "recommended_check": "Check the slot-change log and the latest confirmed bin scan."
+  },
+  "feedback_text": {
+    "feedback_ai_outcome": "The location update had not fully propagated, so approving the direct path caused a delayed mis-pick and recovery cost.",
+    "feedback_alt1_outcome": "The sync check caught the mismatch early; the order was delayed slightly, but the major failure cost was avoided.",
+    "feedback_alt2_outcome": "Reserve stock would have worked, but the unnecessary second touch made it costlier than verifying first."
+  },
+  "metadata": {
+    "ground_truth_source": "TianshiWang_Redesigned_Scenario_Bank_v3.csv",
+    "snapshot_policy": "baseline_plus_scenario_delta",
+    "notes": [
+      "Canonical scenario mapping: 'Inventory Discrepancy' -> 'inventory_discrepancy'",
+      "initial_state_snapshot built from baseline_plus_scenario_delta; NOT the oracle truth source"
+    ]
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "case_id": "M11",
+  "block_type": "main",
+  "recommended_order": 11,
+  "scenario_type": "SLA Pressure",
+  "scenario_id": "sla_pressure",
+  "scenario_config_ref": "data/scenarios/sla_pressure.json",
+  "risk_level": "MED",
+  "service_stringency": "SLA Contract",
+  "complexity_score": 4,
+  "ai_correct": true,
+  "oracle": {
+    "action_code": "AI",
+    "action_label": "Approve",
+    "cost_total": 220
+  },
+  "agent_recommendation_action_code": "AI",
+  "order_or_shipment_id": "SLA-8801",
+  "case_title": "Retailer KPI is tight, but standard flow still clears",
+  "exception_description": "Order SLA-8801 must leave the dock within 2 hours to preserve a retailer fill-rate KPI. The standard outbound queue is heavy, but current throughput still keeps the order just inside the commitment. AI recommends keeping the standard flow.",
+  "layer1_visible": "Order SLA-8801 must leave the dock within 2 hours to preserve a retailer fill-rate KPI. The standard outbound queue is heavy, but current throughput still keeps the order just inside the commitment. AI recommends keeping the standard flow.",
+  "detail_expand": "A priority gate is available, yet using it pulls labor from another live retailer wave and creates a coordination charge. The order is time sensitive, but not yet in breach territory. The case is designed to see whether an SLA frame alone causes excessive verification or escalation in this decision.",
+  "ai_recommendation": "AI recommends staying in the standard flow because the current throughput forecast still meets the KPI and a priority-gate move is expensive.",
+  "decision_options": [
+    {
+      "action_code": "AI",
+      "decision_type": "approve",
+      "action_label": "Keep standard outbound flow"
+    },
+    {
+      "action_code": "ALT1",
+      "decision_type": "verify_pause",
+      "action_label": "Pause to verify queue forecast and release slot"
+    },
+    {
+      "action_code": "ALT2",
+      "decision_type": "alternative_plan",
+      "action_label": "Move order to priority gate now"
+    }
+  ],
+  "cost_ground_truth": {
+    "AI": {
+      "c_direct": 100,
+      "c_outcome": 120,
+      "c_total": 220
+    },
+    "ALT1": {
+      "c_direct": 140,
+      "c_outcome": 240,
+      "c_total": 380
+    },
+    "ALT2": {
+      "c_direct": 140,
+      "c_outcome": 200,
+      "c_total": 340
+    }
+  },
+  "initial_state_snapshot": {
+    "timestamp": "2026-03-01T09:00:00Z",
+    "suppliers": [
+      {
+        "id": "SUP_1",
+        "name": "Primary Supplier",
+        "lead_time_days": 5,
+        "reliability_score": 0.92,
+        "capacity_units": 500,
+        "is_active": true
+      },
+      {
+        "id": "SUP_2",
+        "name": "Backup Supplier",
+        "lead_time_days": 9,
+        "reliability_score": 0.8,
+        "capacity_units": 200,
+        "is_active": true
+      }
+    ],
+    "warehouses": [
+      {
+        "id": "WH_1",
+        "name": "Primary Warehouse",
+        "location": "Montreal",
+        "max_capacity": 1000,
+        "current_inventory": 300,
+        "operating_cost_per_unit": 1.0
+      },
+      {
+        "id": "WH_2",
+        "name": "Reserve Warehouse",
+        "location": "Toronto",
+        "max_capacity": 600,
+        "current_inventory": 150,
+        "operating_cost_per_unit": 1.5
+      }
+    ],
+    "carriers": [
+      {
+        "id": "CR_1",
+        "name": "Primary Carrier",
+        "available": true,
+        "cost_per_unit": 5.0,
+        "transit_time_hours": 24,
+        "capacity_limit": 200
+      },
+      {
+        "id": "CR_2",
+        "name": "Express Carrier",
+        "available": true,
+        "cost_per_unit": 12.0,
+        "transit_time_hours": 8,
+        "capacity_limit": 80
+      }
+    ],
+    "customer_zones": [
+      {
+        "id": "CZ_1",
+        "name": "Standard Customer Zone",
+        "demand_units": 20,
+        "sla_deadline_hours": 48,
+        "sla_penalty_per_hour": 5.0
+      },
+      {
+        "id": "CZ_2",
+        "name": "Key Account Zone",
+        "demand_units": 10,
+        "sla_deadline_hours": 24,
+        "sla_penalty_per_hour": 10.0
+      }
+    ],
+    "current_disruptions": [
+      {
+        "type": "sla_time_pressure",
+        "description": "Outbound order faces a tight SLA window; standard flow marginally clears deadline",
+        "affected_entity": "CZ_2"
+      }
+    ]
+  },
+  "evaluation_metadata": {
+    "second_best_cost": 340,
+    "oracle_gap_points": 120,
+    "ambiguity_gap_pct": 0.5454545454545454,
+    "ratio_2nd_best": 1.5454545454545454,
+    "error_direction": "—",
+    "action_reversibility": "Partially Reversible"
+  },
+  "traceability_text": {
+    "trace_rationale_short": "Current throughput is tight but sufficient; intervention adds cost unless the forecast is truly wrong.",
+    "trace_key1": "KPI buffer≈2h",
+    "trace_key2": "Priority gate=Manual approval",
+    "trace_key3": "Throughput=Within target",
+    "trace_more": "Audit log stores queue forecast, gate option review, and final action.",
+    "uncertainty_trigger1": "Retailer KPI clock is active",
+    "uncertainty_trigger2": "Priority gate requires manual coordination",
+    "recommended_check": "Check the live queue forecast and release-slot timestamp."
+  },
+  "feedback_text": {
+    "feedback_ai_outcome": "The order cleared the KPI through the normal path, so the standard flow remained the cheapest viable option.",
+    "feedback_alt1_outcome": "The forecast check confirmed the same plan, but the pause added avoidable handling and coordination cost.",
+    "feedback_alt2_outcome": "The priority gate protected the KPI, yet the extra coordination and labor made it more expensive than necessary."
+  },
+  "metadata": {
+    "ground_truth_source": "TianshiWang_Redesigned_Scenario_Bank_v3.csv",
+    "snapshot_policy": "baseline_plus_scenario_delta",
+    "notes": [
+      "Canonical scenario mapping: 'SLA Pressure' -> 'sla_pressure'",
+      "initial_state_snapshot built from baseline_plus_scenario_delta; NOT the oracle truth source"
+    ]
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "case_id": "M06",
+  "block_type": "main",
+  "recommended_order": 6,
+  "scenario_type": "Resource Allocation",
+  "scenario_id": "warehouse_capacity_or_equipment_issue",
+  "scenario_config_ref": "data/scenarios/warehouse_capacity_or_equipment_issue.json",
+  "risk_level": "LOW",
+  "service_stringency": "Std B2C",
+  "complexity_score": 2,
+  "ai_correct": true,
+  "oracle": {
+    "action_code": "AI",
+    "action_label": "Approve",
+    "cost_total": 90
+  },
+  "agent_recommendation_action_code": "AI",
+  "order_or_shipment_id": "RA-7012",
+  "case_title": "One scanner offline in a non-urgent wave",
+  "exception_description": "Wave RA-7012 has 12 standard orders. One handheld scanner is offline, but the remaining station can absorb the work with only a short queue increase. AI recommends keeping the current pick sequence and letting the open station clear the batch.",
+  "layer1_visible": "Wave RA-7012 has 12 standard orders. One handheld scanner is offline, but the remaining station can absorb the work with only a short queue increase. AI recommends keeping the current pick sequence and letting the open station clear the batch.",
+  "detail_expand": "A spare scanner can be fetched from maintenance, but that retrieval takes time and pulls labor from a nearby replenishment task. No rush orders are included in this wave. The case is designed as a low-risk resource decision where intervention mostly adds friction instead of reducing meaningful downside for the batch.",
+  "ai_recommendation": "AI recommends keeping the current sequence because the remaining station can clear the batch and fetching backup equipment adds more cost than value.",
+  "decision_options": [
+    {
+      "action_code": "AI",
+      "decision_type": "approve",
+      "action_label": "Keep current pick sequence"
+    },
+    {
+      "action_code": "ALT1",
+      "decision_type": "verify_pause",
+      "action_label": "Pause to confirm spare-scanner ETA"
+    },
+    {
+      "action_code": "ALT2",
+      "decision_type": "alternative_plan",
+      "action_label": "Manually rebalance the wave now"
+    }
+  ],
+  "cost_ground_truth": {
+    "AI": {
+      "c_direct": 50,
+      "c_outcome": 40,
+      "c_total": 90
+    },
+    "ALT1": {
+      "c_direct": 140,
+      "c_outcome": 120,
+      "c_total": 260
+    },
+    "ALT2": {
+      "c_direct": 110,
+      "c_outcome": 170,
+      "c_total": 280
+    }
+  },
+  "initial_state_snapshot": {
+    "timestamp": "2026-03-01T09:00:00Z",
+    "suppliers": [
+      {
+        "id": "SUP_1",
+        "name": "Primary Supplier",
+        "lead_time_days": 5,
+        "reliability_score": 0.92,
+        "capacity_units": 500,
+        "is_active": true
+      },
+      {
+        "id": "SUP_2",
+        "name": "Backup Supplier",
+        "lead_time_days": 9,
+        "reliability_score": 0.8,
+        "capacity_units": 200,
+        "is_active": true
+      }
+    ],
+    "warehouses": [
+      {
+        "id": "WH_1",
+        "name": "Primary Warehouse",
+        "location": "Montreal",
+        "max_capacity": 1000,
+        "current_inventory": 300,
+        "operating_cost_per_unit": 1.0
+      },
+      {
+        "id": "WH_2",
+        "name": "Reserve Warehouse",
+        "location": "Toronto",
+        "max_capacity": 600,
+        "current_inventory": 150,
+        "operating_cost_per_unit": 1.5
+      }
+    ],
+    "carriers": [
+      {
+        "id": "CR_1",
+        "name": "Primary Carrier",
+        "available": true,
+        "cost_per_unit": 5.0,
+        "transit_time_hours": 24,
+        "capacity_limit": 200
+      },
+      {
+        "id": "CR_2",
+        "name": "Express Carrier",
+        "available": true,
+        "cost_per_unit": 12.0,
+        "transit_time_hours": 8,
+        "capacity_limit": 80
+      }
+    ],
+    "customer_zones": [
+      {
+        "id": "CZ_1",
+        "name": "Standard Customer Zone",
+        "demand_units": 20,
+        "sla_deadline_hours": 48,
+        "sla_penalty_per_hour": 5.0
+      },
+      {
+        "id": "CZ_2",
+        "name": "Key Account Zone",
+        "demand_units": 10,
+        "sla_deadline_hours": 24,
+        "sla_penalty_per_hour": 10.0
+      }
+    ],
+    "current_disruptions": [
+      {
+        "type": "warehouse_resource",
+        "description": "Pick station or scanner may be offline; throughput partially constrained",
+        "affected_entity": "WH_1"
+      }
+    ]
+  },
+  "evaluation_metadata": {
+    "second_best_cost": 260,
+    "oracle_gap_points": 170,
+    "ambiguity_gap_pct": 1.8888888888888888,
+    "ratio_2nd_best": 2.888888888888889,
+    "error_direction": "—",
+    "action_reversibility": "Reversible"
+  },
+  "traceability_text": {
+    "trace_rationale_short": "The visible capacity loss is manageable, so stability is cheaper than intervention.",
+    "trace_key1": "Orders in wave=12",
+    "trace_key2": "Rush orders=0",
+    "trace_key3": "Spare scanner=Maintenance pool",
+    "trace_more": "Audit log stores scanner status, ETA check, and queue decision.",
+    "uncertainty_trigger1": "One scanner offline",
+    "uncertainty_trigger2": "No rush orders in wave",
+    "recommended_check": "Check maintenance ETA for the spare scanner."
+  },
+  "feedback_text": {
+    "feedback_ai_outcome": "The open station cleared the wave on time, so the simple path kept total cost lowest.",
+    "feedback_alt1_outcome": "The spare-equipment check did not change the plan, but it added waiting and coordination cost.",
+    "feedback_alt2_outcome": "The rebalance finished safely, yet the manual reshuffle created unnecessary labor and scanning overhead."
+  },
+  "metadata": {
+    "ground_truth_source": "TianshiWang_Redesigned_Scenario_Bank_v3.csv",
+    "snapshot_policy": "baseline_plus_scenario_delta",
+    "notes": [
+      "Canonical scenario mapping: 'Resource Allocation' -> 'warehouse_capacity_or_equipment_issue'",
+      "initial_state_snapshot built from baseline_plus_scenario_delta; NOT the oracle truth source"
+    ]
+  }
+}

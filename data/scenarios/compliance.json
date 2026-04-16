@@ -1,0 +1,34 @@
+{
+  "scenario_id": "compliance",
+  "name": "Compliance",
+  "description": "A regulated shipment (e.g., battery accessory, hazmat classification) requires a compliant carrier or documentation path. The AI may recommend the normal export path, but a compliance flag or classification mismatch indicates that a specialist carrier or documentation step is required. The human must decide whether to follow AI, pause for verification, or redirect to the compliant path.",
+  "severity": "critical",
+  "disruption_type": "regulatory_compliance",
+  "affected_entities": ["CR_1", "CR_2", "CZ_2"],
+  "entity_patches": [
+    {
+      "entity_type": "carrier",
+      "entity_id": "CR_1",
+      "op": "set",
+      "field": "available",
+      "value": false,
+      "_note": "Primary carrier flagged as non-compliant for regulated shipment; set unavailable to block routing"
+    }
+  ],
+  "variable_changes": {
+    "CR_1": {
+      "compliance_note": "Primary carrier classification note may not match latest carrier acceptance rule for regulated goods; risk of non-acceptance at pickup"
+    },
+    "CR_2": {
+      "role_note": "Specialist compliant carrier available as alternative; higher cost but guaranteed regulatory acceptance"
+    }
+  },
+  "weather_fallback": "No weather dependency. Compliance is a regulatory documentation scenario.",
+  "weather_location": null,
+  "difficulty_notes": "AI error cases: AI recommends normal path despite a visible classification mismatch. Correct response is ALT2 (redirect to compliant carrier). Over-verification (ALT1) is suboptimal when the mismatch is already visible in the documentation.",
+  "_notes": [
+    "Canonical mapping: Compliance -> compliance",
+    "Weather coordinates unavailable; fallback-only mode used",
+    "entity_patches is the authoritative delta source; variable_changes is narrative context only"
+  ]
+}

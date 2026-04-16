@@ -1,0 +1,169 @@
+{
+  "case_id": "P04",
+  "block_type": "practice",
+  "recommended_order": 4,
+  "scenario_type": "Inventory Discrepancy",
+  "scenario_id": "inventory_discrepancy",
+  "scenario_config_ref": "data/scenarios/inventory_discrepancy.json",
+  "risk_level": "MED",
+  "service_stringency": "Promised-date",
+  "complexity_score": 3,
+  "ai_correct": false,
+  "oracle": {
+    "action_code": "ALT2",
+    "action_label": "Alternative",
+    "cost_total": 180
+  },
+  "agent_recommendation_action_code": "AI",
+  "order_or_shipment_id": "WH-P04-6640",
+  "case_title": "Slot move creates a hidden stock mismatch",
+  "exception_description": "Order WH-P04-6640 for three units of SKU CAB-77 is due tomorrow morning. WMS shows 8 units in the forward bin, but that location was re-slotted overnight and the reserve pallet has already been opened. AI proposes shipping from the forward bin.",
+  "layer1_visible": "Order WH-P04-6640 for three units of SKU CAB-77 is due tomorrow morning. WMS shows 8 units in the forward bin, but that location was re-slotted overnight and the reserve pallet has already been opened. AI proposes shipping from the forward bin.",
+  "detail_expand": "Recent moves between pick faces have not fully synchronized, and one missing unit would hold the entire order. A nearby reserve zone can cover the order immediately, but it adds walking and second-touch handling. A manual check helps, yet it is slower than switching to confirmed reserve stock now for this order.",
+  "ai_recommendation": "AI recommends shipping from the forward bin because the system quantity still covers demand and avoids extra handling.",
+  "decision_options": [
+    {
+      "action_code": "AI",
+      "decision_type": "approve",
+      "action_label": "Pack from current forward bin"
+    },
+    {
+      "action_code": "ALT1",
+      "decision_type": "verify_pause",
+      "action_label": "Pause to reconcile slot-move and scan logs"
+    },
+    {
+      "action_code": "ALT2",
+      "decision_type": "alternative_plan",
+      "action_label": "Pull confirmed stock from reserve zone now"
+    }
+  ],
+  "cost_ground_truth": {
+    "AI": {
+      "c_direct": 80,
+      "c_outcome": 280,
+      "c_total": 360
+    },
+    "ALT1": {
+      "c_direct": 140,
+      "c_outcome": 140,
+      "c_total": 280
+    },
+    "ALT2": {
+      "c_direct": 120,
+      "c_outcome": 60,
+      "c_total": 180
+    }
+  },
+  "initial_state_snapshot": {
+    "timestamp": "2026-03-01T09:00:00Z",
+    "suppliers": [
+      {
+        "id": "SUP_1",
+        "name": "Primary Supplier",
+        "lead_time_days": 5,
+        "reliability_score": 0.92,
+        "capacity_units": 500,
+        "is_active": true
+      },
+      {
+        "id": "SUP_2",
+        "name": "Backup Supplier",
+        "lead_time_days": 9,
+        "reliability_score": 0.8,
+        "capacity_units": 200,
+        "is_active": true
+      }
+    ],
+    "warehouses": [
+      {
+        "id": "WH_1",
+        "name": "Primary Warehouse",
+        "location": "Montreal",
+        "max_capacity": 1000,
+        "current_inventory": 300,
+        "operating_cost_per_unit": 1.0
+      },
+      {
+        "id": "WH_2",
+        "name": "Reserve Warehouse",
+        "location": "Toronto",
+        "max_capacity": 600,
+        "current_inventory": 150,
+        "operating_cost_per_unit": 1.5
+      }
+    ],
+    "carriers": [
+      {
+        "id": "CR_1",
+        "name": "Primary Carrier",
+        "available": true,
+        "cost_per_unit": 5.0,
+        "transit_time_hours": 24,
+        "capacity_limit": 200
+      },
+      {
+        "id": "CR_2",
+        "name": "Express Carrier",
+        "available": true,
+        "cost_per_unit": 12.0,
+        "transit_time_hours": 8,
+        "capacity_limit": 80
+      }
+    ],
+    "customer_zones": [
+      {
+        "id": "CZ_1",
+        "name": "Standard Customer Zone",
+        "demand_units": 20,
+        "sla_deadline_hours": 48,
+        "sla_penalty_per_hour": 5.0
+      },
+      {
+        "id": "CZ_2",
+        "name": "Key Account Zone",
+        "demand_units": 10,
+        "sla_deadline_hours": 24,
+        "sla_penalty_per_hour": 10.0
+      }
+    ],
+    "current_disruptions": [
+      {
+        "type": "inventory_accuracy",
+        "description": "WMS stock count may not match physical pick-bin quantity",
+        "affected_entity": "WH_1"
+      }
+    ]
+  },
+  "evaluation_metadata": {
+    "second_best_cost": 280,
+    "oracle_gap_points": 100,
+    "ambiguity_gap_pct": 0.5555555555555556,
+    "ratio_2nd_best": 1.5555555555555556,
+    "error_direction": "Type I",
+    "action_reversibility": "Partially Reversible"
+  },
+  "traceability_text": {
+    "trace_rationale_short": "System stock looks sufficient, but slot-sync uncertainty weakens the direct path.",
+    "trace_key1": "Forward bin=8",
+    "trace_key2": "Reserve zone=Confirmed",
+    "trace_key3": "Slot change=Overnight",
+    "trace_more": "Audit log stores location-change timestamp and reserve-zone confirmation.",
+    "uncertainty_trigger1": "Overnight re-slot may be unsynced",
+    "uncertainty_trigger2": "Reserve stock is confirmed nearby",
+    "recommended_check": "Check the slot-change log and the latest confirmed bin scan."
+  },
+  "feedback_text": {
+    "feedback_ai_outcome": "The forward bin was short by one unit, so the order stalled and required recovery work.",
+    "feedback_alt1_outcome": "The reconciliation exposed the mismatch, but the pause delayed release more than an immediate reserve pull would have.",
+    "feedback_alt2_outcome": "Reserve stock covered the order cleanly, so the extra handling cost was still lower than the failure path."
+  },
+  "metadata": {
+    "ground_truth_source": "TianshiWang_Redesigned_Scenario_Bank_v3.csv",
+    "snapshot_policy": "baseline_plus_scenario_delta",
+    "notes": [
+      "Canonical scenario mapping: 'Inventory Discrepancy' -> 'inventory_discrepancy'",
+      "initial_state_snapshot built from baseline_plus_scenario_delta; NOT the oracle truth source"
+    ]
+  }
+}

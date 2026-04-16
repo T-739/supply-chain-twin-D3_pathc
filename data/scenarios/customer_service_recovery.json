@@ -1,0 +1,31 @@
+{
+  "scenario_id": "customer_service_recovery",
+  "name": "Customer Service Recovery",
+  "description": "A customer-facing delay or dissatisfaction event. The AI recommends a lightweight proactive recovery action (e.g., notification or small gesture). The human decides whether to approve the minimal action, pause to investigate, or escalate.",
+  "severity": "low",
+  "disruption_type": "customer_sla_risk",
+  "affected_entities": ["CZ_1", "CZ_2"],
+  "entity_patches": [
+    {
+      "entity_type": "customer_zone",
+      "entity_id": "CZ_1",
+      "op": "add",
+      "field": "sla_penalty_per_hour",
+      "value": 2.0,
+      "_note": "Elevated penalty exposure due to customer sensitivity flag (baseline 5.0 -> 7.0 per hour)"
+    }
+  ],
+  "variable_changes": {
+    "CZ_1": {
+      "sla_pressure_note": "Customer has flagged delay sensitivity; effective SLA penalty rate raised"
+    }
+  },
+  "weather_fallback": "No direct weather dependency. Customer recovery scenario is SLA-driven.",
+  "weather_location": null,
+  "difficulty_notes": "Low-cost proactive recovery is usually optimal. Over-intervention (escalation) inflates cost unnecessarily.",
+  "_notes": [
+    "Canonical mapping: Customer Service -> customer_service_recovery",
+    "Weather coordinates unavailable; fallback-only mode used",
+    "entity_patches is the authoritative delta source; variable_changes is narrative context only"
+  ]
+}

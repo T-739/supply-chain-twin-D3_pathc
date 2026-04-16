@@ -1,0 +1,169 @@
+{
+  "case_id": "M12",
+  "block_type": "main",
+  "recommended_order": 12,
+  "scenario_type": "Split vs Hold",
+  "scenario_id": "split_vs_hold",
+  "scenario_config_ref": "data/scenarios/split_vs_hold.json",
+  "risk_level": "MED",
+  "service_stringency": "Std B2C",
+  "complexity_score": 3,
+  "ai_correct": true,
+  "oracle": {
+    "action_code": "AI",
+    "action_label": "Approve",
+    "cost_total": 160
+  },
+  "agent_recommendation_action_code": "AI",
+  "order_or_shipment_id": "SH-9017",
+  "case_title": "Hold for one parcel versus split shipment today",
+  "exception_description": "Order SH-9017 contains two items from different zones. One item is ready now; the second is expected at the pick face later today. AI recommends holding both items and shipping together in one parcel.",
+  "layer1_visible": "Order SH-9017 contains two items from different zones. One item is ready now; the second is expected at the pick face later today. AI recommends holding both items and shipping together in one parcel.",
+  "detail_expand": "Sending a split shipment would improve perceived speed for one line item, but it doubles parcel and packing cost. The customer selected standard delivery, and the second item is still expected before pack cutoff. The case is built to test whether participants over-intervene on moderate ambiguity when a combined shipment remains the best total-cost choice.",
+  "ai_recommendation": "AI recommends holding and shipping together because the second item is still expected before cutoff and one parcel avoids duplicate fulfillment cost.",
+  "decision_options": [
+    {
+      "action_code": "AI",
+      "decision_type": "approve",
+      "action_label": "Hold and ship together"
+    },
+    {
+      "action_code": "ALT1",
+      "decision_type": "verify_pause",
+      "action_label": "Pause to confirm ETA and customer preference"
+    },
+    {
+      "action_code": "ALT2",
+      "decision_type": "alternative_plan",
+      "action_label": "Ship ready item now and split the order"
+    }
+  ],
+  "cost_ground_truth": {
+    "AI": {
+      "c_direct": 70,
+      "c_outcome": 90,
+      "c_total": 160
+    },
+    "ALT1": {
+      "c_direct": 140,
+      "c_outcome": 160,
+      "c_total": 300
+    },
+    "ALT2": {
+      "c_direct": 120,
+      "c_outcome": 160,
+      "c_total": 280
+    }
+  },
+  "initial_state_snapshot": {
+    "timestamp": "2026-03-01T09:00:00Z",
+    "suppliers": [
+      {
+        "id": "SUP_1",
+        "name": "Primary Supplier",
+        "lead_time_days": 5,
+        "reliability_score": 0.92,
+        "capacity_units": 500,
+        "is_active": true
+      },
+      {
+        "id": "SUP_2",
+        "name": "Backup Supplier",
+        "lead_time_days": 9,
+        "reliability_score": 0.8,
+        "capacity_units": 200,
+        "is_active": true
+      }
+    ],
+    "warehouses": [
+      {
+        "id": "WH_1",
+        "name": "Primary Warehouse",
+        "location": "Montreal",
+        "max_capacity": 1000,
+        "current_inventory": 300,
+        "operating_cost_per_unit": 1.0
+      },
+      {
+        "id": "WH_2",
+        "name": "Reserve Warehouse",
+        "location": "Toronto",
+        "max_capacity": 600,
+        "current_inventory": 150,
+        "operating_cost_per_unit": 1.5
+      }
+    ],
+    "carriers": [
+      {
+        "id": "CR_1",
+        "name": "Primary Carrier",
+        "available": true,
+        "cost_per_unit": 5.0,
+        "transit_time_hours": 24,
+        "capacity_limit": 200
+      },
+      {
+        "id": "CR_2",
+        "name": "Express Carrier",
+        "available": true,
+        "cost_per_unit": 12.0,
+        "transit_time_hours": 8,
+        "capacity_limit": 80
+      }
+    ],
+    "customer_zones": [
+      {
+        "id": "CZ_1",
+        "name": "Standard Customer Zone",
+        "demand_units": 20,
+        "sla_deadline_hours": 48,
+        "sla_penalty_per_hour": 5.0
+      },
+      {
+        "id": "CZ_2",
+        "name": "Key Account Zone",
+        "demand_units": 10,
+        "sla_deadline_hours": 24,
+        "sla_penalty_per_hour": 10.0
+      }
+    ],
+    "current_disruptions": [
+      {
+        "type": "order_fulfillment_split",
+        "description": "Multi-item order: one item ready, second item expected later today",
+        "affected_entity": "WH_1"
+      }
+    ]
+  },
+  "evaluation_metadata": {
+    "second_best_cost": 280,
+    "oracle_gap_points": 120,
+    "ambiguity_gap_pct": 0.75,
+    "ratio_2nd_best": 1.75,
+    "error_direction": "—",
+    "action_reversibility": "Partially Reversible"
+  },
+  "traceability_text": {
+    "trace_rationale_short": "One parcel is cheaper if the second item still arrives before the day-end cutoff.",
+    "trace_key1": "Item B ETA=Later today",
+    "trace_key2": "Delivery mode=Standard",
+    "trace_key3": "Split cost=Double parcel",
+    "trace_more": "Audit log stores ETA source, customer note, and ship-mode decision.",
+    "uncertainty_trigger1": "Second item ETA is later today",
+    "uncertainty_trigger2": "Split shipment doubles parcel cost",
+    "recommended_check": "Check the inbound ETA and any delivery-preference note before releasing."
+  },
+  "feedback_text": {
+    "feedback_ai_outcome": "The second item arrived in time, so the combined shipment was the lowest-cost acceptable choice.",
+    "feedback_alt1_outcome": "The ETA check confirmed the same answer, but the pause consumed time without changing the best action.",
+    "feedback_alt2_outcome": "The split shipment improved speed for one item, but the duplicated parcel work made it more expensive overall."
+  },
+  "metadata": {
+    "ground_truth_source": "TianshiWang_Redesigned_Scenario_Bank_v3.csv",
+    "snapshot_policy": "baseline_plus_scenario_delta",
+    "notes": [
+      "Canonical scenario mapping: 'Split vs Hold' -> 'split_vs_hold'",
+      "initial_state_snapshot built from baseline_plus_scenario_delta; NOT the oracle truth source"
+    ]
+  }
+}

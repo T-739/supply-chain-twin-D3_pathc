@@ -1,0 +1,34 @@
+{
+  "scenario_id": "sla_pressure",
+  "name": "SLA Pressure",
+  "description": "An outbound order faces a tight SLA or OTIF commitment window. The AI recommends staying on the standard flow because current throughput still clears the deadline with marginal buffer. The human must decide whether to trust the forecast or escalate to a priority lane early.",
+  "severity": "high",
+  "disruption_type": "sla_time_pressure",
+  "affected_entities": ["WH_1", "CZ_2"],
+  "entity_patches": [
+    {
+      "entity_type": "customer_zone",
+      "entity_id": "CZ_2",
+      "op": "add",
+      "field": "sla_deadline_hours",
+      "value": -4,
+      "_note": "Tightened commitment window: retailer KPI requires 4-hour earlier cutoff (baseline 18 -> 14 hours)"
+    }
+  ],
+  "variable_changes": {
+    "CZ_2": {
+      "sla_pressure_note": "SLA or OTIF commitment deadline is tight; standard outbound queue is heavy but throughput forecast shows marginal clearance"
+    },
+    "WH_1": {
+      "throughput_note": "Outbound dock queue elevated; standard flow still projected to meet deadline based on live forecast"
+    }
+  },
+  "weather_fallback": "No weather dependency. SLA pressure is driven by queue depth and throughput forecast.",
+  "weather_location": null,
+  "difficulty_notes": "High-risk cases test whether the human correctly trusts the AI's margin estimate when the queue looks alarming but math shows clearance. Over-escalation wastes priority lane cost when buffer is sufficient.",
+  "_notes": [
+    "Canonical mapping: SLA Pressure -> sla_pressure",
+    "Weather coordinates unavailable; fallback-only mode used",
+    "entity_patches is the authoritative delta source; variable_changes is narrative context only"
+  ]
+}

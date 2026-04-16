@@ -1,0 +1,41 @@
+{
+  "scenario_id": "carrier_disruption",
+  "name": "Carrier Disruption",
+  "description": "Primary carrier (CR_1) reports a service warning or delay. The AI may recommend holding the current carrier if the promise window is still protected; the human may choose to expedite or compensate.",
+  "severity": "high",
+  "disruption_type": "carrier_availability",
+  "affected_entities": ["CR_1"],
+  "entity_patches": [
+    {
+      "entity_type": "carrier",
+      "entity_id": "CR_1",
+      "op": "add",
+      "field": "transit_time_hours",
+      "value": 12,
+      "_note": "Simulates a 12-hour route delay warning on primary carrier (baseline 36 -> 48 hours)"
+    },
+    {
+      "entity_type": "carrier",
+      "entity_id": "CR_1",
+      "op": "add",
+      "field": "cost_per_unit",
+      "value": 2.0,
+      "_note": "Fuel surcharge applied by carrier during disruption period (baseline 3.0 -> 5.0)"
+    }
+  ],
+  "variable_changes": {
+    "CR_1": {
+      "available": true,
+      "delay_warning": true,
+      "transit_time_hours_note": "Route delay of 12 hours; backup carrier (CR_2) available at premium"
+    }
+  },
+  "weather_fallback": "Carrier delays may be weather-related (storm, road closure). Fallback: generic 'adverse conditions' label.",
+  "weather_location": "TODO_WEATHER_LOCATION",
+  "difficulty_notes": "If remaining SLA buffer absorbs the delay, AI approval is correct. High-risk cases test whether the human correctly judges remaining margin.",
+  "_notes": [
+    "Canonical mapping: Carrier Disruption -> carrier_disruption",
+    "Weather coordinates unavailable; TODO_WEATHER_LOCATION placeholder used",
+    "entity_patches is the authoritative delta source; variable_changes is narrative context only"
+  ]
+}

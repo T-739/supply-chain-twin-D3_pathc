@@ -1,0 +1,123 @@
+{
+  "rows": [
+    {
+      "replay_id": "rp_2f8f5497e067",
+      "timestamp_utc": "2026-04-16T01:48:54Z",
+      "case_id": "M01",
+      "scenario_id": "inventory_discrepancy",
+      "scenario_type": "Inventory Discrepancy",
+      "scenario_family": "inventory",
+      "risk_level": "LOW",
+      "supervisor_mode": "approve",
+      "retrieval_mode": "tfidf_legacy",
+      "operations_mode": "rules",
+      "governance_mode": "rules",
+      "supervisor_decision_type": "APPROVE",
+      "human_action_code": "AI",
+      "agent_action_code": "AI",
+      "oracle_action_code": "AI",
+      "chosen_cost": 100.0,
+      "oracle_cost": 100.0,
+      "regret": 0.0,
+      "is_override": false,
+      "is_unnecessary_override": false,
+      "override_effectiveness": "no_override",
+      "override_target_label": null,
+      "retrieval_engine_mode": "tfidf_legacy",
+      "retrieval_candidate_count": 4,
+      "retrieval_query_hash": null,
+      "retrieval_contextualized": false,
+      "retrieval_reranker_used": false,
+      "retrieval_fallback_used": false,
+      "retrieval_embedder_name": null,
+      "retrieval_reranker_name": null,
+      "ops_llm_provider": null,
+      "ops_llm_model": null,
+      "ops_llm_attempts": null,
+      "ops_llm_fallback_used": null,
+      "gov_llm_provider": null,
+      "gov_llm_model": null,
+      "gov_llm_attempts": null,
+      "gov_llm_fallback_used": null,
+      "latency_ms": 2.936167176812887,
+      "status": "ok",
+      "skip_reason": null,
+      "error": null
+    }
+  ],
+  "aggregations": {
+    "overall": {
+      "n_total": 1,
+      "n_ok": 1,
+      "n_skipped": 0,
+      "n_error": 0,
+      "mean_regret": 0.0,
+      "unnecessary_override_rate": 0.0,
+      "override_effectiveness_mean": null,
+      "retrieval_fallback_count": 0,
+      "ops_llm_fallback_count": 0,
+      "gov_llm_fallback_count": 0,
+      "mean_latency_ms": 2.936167176812887
+    },
+    "by_supervisor_mode": {
+      "approve": {
+        "n_total": 1,
+        "n_ok": 1,
+        "n_skipped": 0,
+        "n_error": 0,
+        "mean_regret": 0.0,
+        "unnecessary_override_rate": 0.0,
+        "override_effectiveness_mean": null,
+        "retrieval_fallback_count": 0,
+        "ops_llm_fallback_count": 0,
+        "gov_llm_fallback_count": 0,
+        "mean_latency_ms": 2.936167176812887
+      }
+    },
+    "by_retrieval_mode": {
+      "tfidf_legacy": {
+        "n_total": 1,
+        "n_ok": 1,
+        "n_skipped": 0,
+        "n_error": 0,
+        "mean_regret": 0.0,
+        "unnecessary_override_rate": 0.0,
+        "override_effectiveness_mean": null,
+        "retrieval_fallback_count": 0,
+        "ops_llm_fallback_count": 0,
+        "gov_llm_fallback_count": 0,
+        "mean_latency_ms": 2.936167176812887
+      }
+    },
+    "by_risk_level": {
+      "LOW": {
+        "n_total": 1,
+        "n_ok": 1,
+        "n_skipped": 0,
+        "n_error": 0,
+        "mean_regret": 0.0,
+        "unnecessary_override_rate": 0.0,
+        "override_effectiveness_mean": null,
+        "retrieval_fallback_count": 0,
+        "ops_llm_fallback_count": 0,
+        "gov_llm_fallback_count": 0,
+        "mean_latency_ms": 2.936167176812887
+      }
+    },
+    "by_scenario_family": {
+      "inventory": {
+        "n_total": 1,
+        "n_ok": 1,
+        "n_skipped": 0,
+        "n_error": 0,
+        "mean_regret": 0.0,
+        "unnecessary_override_rate": 0.0,
+        "override_effectiveness_mean": null,
+        "retrieval_fallback_count": 0,
+        "ops_llm_fallback_count": 0,
+        "gov_llm_fallback_count": 0,
+        "mean_latency_ms": 2.936167176812887
+      }
+    }
+  }
+}

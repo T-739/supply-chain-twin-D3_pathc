@@ -1,0 +1,169 @@
+{
+  "case_id": "M07",
+  "block_type": "main",
+  "recommended_order": 7,
+  "scenario_type": "Resource Allocation",
+  "scenario_id": "warehouse_capacity_or_equipment_issue",
+  "scenario_config_ref": "data/scenarios/warehouse_capacity_or_equipment_issue.json",
+  "risk_level": "MED",
+  "service_stringency": "Promised-date",
+  "complexity_score": 3,
+  "ai_correct": true,
+  "oracle": {
+    "action_code": "AI",
+    "action_label": "Approve",
+    "cost_total": 200
+  },
+  "agent_recommendation_action_code": "AI",
+  "order_or_shipment_id": "RA-7255",
+  "case_title": "Backlog can be cleared if the new template holds",
+  "exception_description": "Wave RA-7255 includes 14 promised-date orders. Packing lane P1 is free, but the staff there are still adjusting to a new cartonization template. AI recommends moving the entire queue to P1 to clear a growing backlog.",
+  "layer1_visible": "Wave RA-7255 includes 14 promised-date orders. Packing lane P1 is free, but the staff there are still adjusting to a new cartonization template. AI recommends moving the entire queue to P1 to clear a growing backlog.",
+  "detail_expand": "Template mistakes would create rework, yet supervisors report that P1 already completed a small test batch successfully. Leaving the queue in place risks lateness on four promised orders. The case combines moderate quality risk with a credible operational reason to trust the AI recommendation under time pressure on this wave.",
+  "ai_recommendation": "AI recommends moving the queue to P1 because current evidence suggests the lane is ready and immediate transfer best protects the promised orders.",
+  "decision_options": [
+    {
+      "action_code": "AI",
+      "decision_type": "approve",
+      "action_label": "Move full queue to lane P1"
+    },
+    {
+      "action_code": "ALT1",
+      "decision_type": "verify_pause",
+      "action_label": "Pause to verify template and staff readiness"
+    },
+    {
+      "action_code": "ALT2",
+      "decision_type": "alternative_plan",
+      "action_label": "Move only standard orders to P1"
+    }
+  ],
+  "cost_ground_truth": {
+    "AI": {
+      "c_direct": 90,
+      "c_outcome": 110,
+      "c_total": 200
+    },
+    "ALT1": {
+      "c_direct": 140,
+      "c_outcome": 200,
+      "c_total": 340
+    },
+    "ALT2": {
+      "c_direct": 150,
+      "c_outcome": 210,
+      "c_total": 360
+    }
+  },
+  "initial_state_snapshot": {
+    "timestamp": "2026-03-01T09:00:00Z",
+    "suppliers": [
+      {
+        "id": "SUP_1",
+        "name": "Primary Supplier",
+        "lead_time_days": 5,
+        "reliability_score": 0.92,
+        "capacity_units": 500,
+        "is_active": true
+      },
+      {
+        "id": "SUP_2",
+        "name": "Backup Supplier",
+        "lead_time_days": 9,
+        "reliability_score": 0.8,
+        "capacity_units": 200,
+        "is_active": true
+      }
+    ],
+    "warehouses": [
+      {
+        "id": "WH_1",
+        "name": "Primary Warehouse",
+        "location": "Montreal",
+        "max_capacity": 1000,
+        "current_inventory": 300,
+        "operating_cost_per_unit": 1.0
+      },
+      {
+        "id": "WH_2",
+        "name": "Reserve Warehouse",
+        "location": "Toronto",
+        "max_capacity": 600,
+        "current_inventory": 150,
+        "operating_cost_per_unit": 1.5
+      }
+    ],
+    "carriers": [
+      {
+        "id": "CR_1",
+        "name": "Primary Carrier",
+        "available": true,
+        "cost_per_unit": 5.0,
+        "transit_time_hours": 24,
+        "capacity_limit": 200
+      },
+      {
+        "id": "CR_2",
+        "name": "Express Carrier",
+        "available": true,
+        "cost_per_unit": 12.0,
+        "transit_time_hours": 8,
+        "capacity_limit": 80
+      }
+    ],
+    "customer_zones": [
+      {
+        "id": "CZ_1",
+        "name": "Standard Customer Zone",
+        "demand_units": 20,
+        "sla_deadline_hours": 48,
+        "sla_penalty_per_hour": 5.0
+      },
+      {
+        "id": "CZ_2",
+        "name": "Key Account Zone",
+        "demand_units": 10,
+        "sla_deadline_hours": 24,
+        "sla_penalty_per_hour": 10.0
+      }
+    ],
+    "current_disruptions": [
+      {
+        "type": "warehouse_resource",
+        "description": "Pick station or scanner may be offline; throughput partially constrained",
+        "affected_entity": "WH_1"
+      }
+    ]
+  },
+  "evaluation_metadata": {
+    "second_best_cost": 340,
+    "oracle_gap_points": 140,
+    "ambiguity_gap_pct": 0.7,
+    "ratio_2nd_best": 1.7,
+    "error_direction": "—",
+    "action_reversibility": "Partially Reversible"
+  },
+  "traceability_text": {
+    "trace_rationale_short": "Backlog relief is valuable here because the lane appears sufficiently ready for the promised-date work.",
+    "trace_key1": "Backlog orders=14",
+    "trace_key2": "Promised orders=4",
+    "trace_key3": "Template status=Test batch passed",
+    "trace_more": "Audit log stores template version, supervisor signoff, and lane allocation.",
+    "uncertainty_trigger1": "New carton template at P1",
+    "uncertainty_trigger2": "Four promised orders at risk",
+    "recommended_check": "Check the template version and supervisor signoff on P1."
+  },
+  "feedback_text": {
+    "feedback_ai_outcome": "P1 handled the queue correctly, so the early transfer protected the promised orders at the lowest total cost.",
+    "feedback_alt1_outcome": "The readiness check confirmed P1 was fine, but the pause reduced the value of moving early.",
+    "feedback_alt2_outcome": "The partial transfer avoided some risk, yet it left backlog on the original lane and increased total handling cost."
+  },
+  "metadata": {
+    "ground_truth_source": "TianshiWang_Redesigned_Scenario_Bank_v3.csv",
+    "snapshot_policy": "baseline_plus_scenario_delta",
+    "notes": [
+      "Canonical scenario mapping: 'Resource Allocation' -> 'warehouse_capacity_or_equipment_issue'",
+      "initial_state_snapshot built from baseline_plus_scenario_delta; NOT the oracle truth source"
+    ]
+  }
+}

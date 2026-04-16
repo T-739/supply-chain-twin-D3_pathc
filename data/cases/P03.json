@@ -1,0 +1,169 @@
+{
+  "case_id": "P03",
+  "block_type": "practice",
+  "recommended_order": 3,
+  "scenario_type": "Resource Allocation",
+  "scenario_id": "warehouse_capacity_or_equipment_issue",
+  "scenario_config_ref": "data/scenarios/warehouse_capacity_or_equipment_issue.json",
+  "risk_level": "HIGH",
+  "service_stringency": "SLA Contract",
+  "complexity_score": 3,
+  "ai_correct": false,
+  "oracle": {
+    "action_code": "ALT1",
+    "action_label": "Verify",
+    "cost_total": 240
+  },
+  "agent_recommendation_action_code": "AI",
+  "order_or_shipment_id": "RA-P03-5521",
+  "case_title": "Temp station may not be ready for urgent work",
+  "exception_description": "Wave RA-P03-5521 has 18 orders, including 4 same-day orders. A temporary packer just logged in, but the required priority-order template may not have loaded on that station. AI proposes releasing urgent work across both stations immediately.",
+  "layer1_visible": "Wave RA-P03-5521 has 18 orders, including 4 same-day orders. A temporary packer just logged in, but the required priority-order template may not have loaded on that station. AI proposes releasing urgent work across both stations immediately.",
+  "detail_expand": "If the temporary lane is not configured correctly, every carton from that lane must be reopened and relabeled. Two replacement orders and two marketplace same-day orders sit in the urgent queue. Keeping everything on the senior lane is safer, but it can still slow the wave if the station is actually ready.",
+  "ai_recommendation": "AI recommends releasing urgent work across both stations because using all visible capacity should reduce queue time and protect SLA exposure.",
+  "decision_options": [
+    {
+      "action_code": "AI",
+      "decision_type": "approve",
+      "action_label": "Release urgent work across both stations now"
+    },
+    {
+      "action_code": "ALT1",
+      "decision_type": "verify_pause",
+      "action_label": "Pause to verify template and printer readiness"
+    },
+    {
+      "action_code": "ALT2",
+      "decision_type": "alternative_plan",
+      "action_label": "Keep urgent work on the senior station only"
+    }
+  ],
+  "cost_ground_truth": {
+    "AI": {
+      "c_direct": 100,
+      "c_outcome": 380,
+      "c_total": 480
+    },
+    "ALT1": {
+      "c_direct": 140,
+      "c_outcome": 100,
+      "c_total": 240
+    },
+    "ALT2": {
+      "c_direct": 150,
+      "c_outcome": 150,
+      "c_total": 300
+    }
+  },
+  "initial_state_snapshot": {
+    "timestamp": "2026-03-01T09:00:00Z",
+    "suppliers": [
+      {
+        "id": "SUP_1",
+        "name": "Primary Supplier",
+        "lead_time_days": 5,
+        "reliability_score": 0.92,
+        "capacity_units": 500,
+        "is_active": true
+      },
+      {
+        "id": "SUP_2",
+        "name": "Backup Supplier",
+        "lead_time_days": 9,
+        "reliability_score": 0.8,
+        "capacity_units": 200,
+        "is_active": true
+      }
+    ],
+    "warehouses": [
+      {
+        "id": "WH_1",
+        "name": "Primary Warehouse",
+        "location": "Montreal",
+        "max_capacity": 1000,
+        "current_inventory": 300,
+        "operating_cost_per_unit": 1.0
+      },
+      {
+        "id": "WH_2",
+        "name": "Reserve Warehouse",
+        "location": "Toronto",
+        "max_capacity": 600,
+        "current_inventory": 150,
+        "operating_cost_per_unit": 1.5
+      }
+    ],
+    "carriers": [
+      {
+        "id": "CR_1",
+        "name": "Primary Carrier",
+        "available": true,
+        "cost_per_unit": 5.0,
+        "transit_time_hours": 24,
+        "capacity_limit": 200
+      },
+      {
+        "id": "CR_2",
+        "name": "Express Carrier",
+        "available": true,
+        "cost_per_unit": 12.0,
+        "transit_time_hours": 8,
+        "capacity_limit": 80
+      }
+    ],
+    "customer_zones": [
+      {
+        "id": "CZ_1",
+        "name": "Standard Customer Zone",
+        "demand_units": 20,
+        "sla_deadline_hours": 48,
+        "sla_penalty_per_hour": 5.0
+      },
+      {
+        "id": "CZ_2",
+        "name": "Key Account Zone",
+        "demand_units": 10,
+        "sla_deadline_hours": 24,
+        "sla_penalty_per_hour": 10.0
+      }
+    ],
+    "current_disruptions": [
+      {
+        "type": "warehouse_resource",
+        "description": "Pick station or scanner may be offline; throughput partially constrained",
+        "affected_entity": "WH_1"
+      }
+    ]
+  },
+  "evaluation_metadata": {
+    "second_best_cost": 300,
+    "oracle_gap_points": 60,
+    "ambiguity_gap_pct": 0.25,
+    "ratio_2nd_best": 1.25,
+    "error_direction": "Type II",
+    "action_reversibility": "Partially Reversible"
+  },
+  "traceability_text": {
+    "trace_rationale_short": "Extra capacity helps only if the second lane is truly configured for the SLA wave.",
+    "trace_key1": "Urgent orders=4",
+    "trace_key2": "Temp station=Unverified",
+    "trace_key3": "Rework risk=High",
+    "trace_more": "Audit log stores station ID, template version, and readiness confirmation.",
+    "uncertainty_trigger1": "Unconfirmed temp-station configuration",
+    "uncertainty_trigger2": "4 same-day orders waiting",
+    "recommended_check": "Confirm template, printer mapping, and user login on the temp station."
+  },
+  "feedback_text": {
+    "feedback_ai_outcome": "The temp station was not ready, so releasing work there caused reprint and reopen costs.",
+    "feedback_alt1_outcome": "The readiness check caught the issue early; the wave slowed, but the major rework loss was avoided.",
+    "feedback_alt2_outcome": "Keeping everything on the senior line was safe, but it left usable capacity idle once the issue was clarified."
+  },
+  "metadata": {
+    "ground_truth_source": "TianshiWang_Redesigned_Scenario_Bank_v3.csv",
+    "snapshot_policy": "baseline_plus_scenario_delta",
+    "notes": [
+      "Canonical scenario mapping: 'Resource Allocation' -> 'warehouse_capacity_or_equipment_issue'",
+      "initial_state_snapshot built from baseline_plus_scenario_delta; NOT the oracle truth source"
+    ]
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "case_id": "M05",
+  "block_type": "main",
+  "recommended_order": 5,
+  "scenario_type": "Inventory Discrepancy",
+  "scenario_id": "inventory_discrepancy",
+  "scenario_config_ref": "data/scenarios/inventory_discrepancy.json",
+  "risk_level": "HIGH",
+  "service_stringency": "Key Account",
+  "complexity_score": 4,
+  "ai_correct": true,
+  "oracle": {
+    "action_code": "AI",
+    "action_label": "Approve",
+    "cost_total": 180
+  },
+  "agent_recommendation_action_code": "AI",
+  "order_or_shipment_id": "KA-6510",
+  "case_title": "Key account order with inbound buffer already scanned",
+  "exception_description": "Key-account order KA-6510 includes a critical spare part. WMS shows 4 units in the forward bin, the last count was 12 hours ago, and a small inbound batch has already been scanned at receiving but not yet put away. AI recommends releasing the order from current stock.",
+  "layer1_visible": "Key-account order KA-6510 includes a critical spare part. WMS shows 4 units in the forward bin, the last count was 12 hours ago, and a small inbound batch has already been scanned at receiving but not yet put away. AI recommends releasing the order from current stock.",
+  "detail_expand": "The customer has a same-day service commitment, so a miss triggers account escalation. Emergency transfer stock exists at another site, but pulling it now would create premium handling and risk duplicate allocation. The case is high risk because of account importance, not because all evidence points against the AI plan.",
+  "ai_recommendation": "AI recommends releasing from current stock because the scanned inbound buffer makes a true shortage unlikely and avoids a costly emergency transfer.",
+  "decision_options": [
+    {
+      "action_code": "AI",
+      "decision_type": "approve",
+      "action_label": "Release order from current stock"
+    },
+    {
+      "action_code": "ALT1",
+      "decision_type": "verify_pause",
+      "action_label": "Pause to verify receiving scan and open allocations"
+    },
+    {
+      "action_code": "ALT2",
+      "decision_type": "alternative_plan",
+      "action_label": "Request emergency transfer from another site"
+    }
+  ],
+  "cost_ground_truth": {
+    "AI": {
+      "c_direct": 100,
+      "c_outcome": 80,
+      "c_total": 180
+    },
+    "ALT1": {
+      "c_direct": 140,
+      "c_outcome": 240,
+      "c_total": 380
+    },
+    "ALT2": {
+      "c_direct": 160,
+      "c_outcome": 240,
+      "c_total": 400
+    }
+  },
+  "initial_state_snapshot": {
+    "timestamp": "2026-03-01T09:00:00Z",
+    "suppliers": [
+      {
+        "id": "SUP_1",
+        "name": "Primary Supplier",
+        "lead_time_days": 5,
+        "reliability_score": 0.92,
+        "capacity_units": 500,
+        "is_active": true
+      },
+      {
+        "id": "SUP_2",
+        "name": "Backup Supplier",
+        "lead_time_days": 9,
+        "reliability_score": 0.8,
+        "capacity_units": 200,
+        "is_active": true
+      }
+    ],
+    "warehouses": [
+      {
+        "id": "WH_1",
+        "name": "Primary Warehouse",
+        "location": "Montreal",
+        "max_capacity": 1000,
+        "current_inventory": 300,
+        "operating_cost_per_unit": 1.0
+      },
+      {
+        "id": "WH_2",
+        "name": "Reserve Warehouse",
+        "location": "Toronto",
+        "max_capacity": 600,
+        "current_inventory": 150,
+        "operating_cost_per_unit": 1.5
+      }
+    ],
+    "carriers": [
+      {
+        "id": "CR_1",
+        "name": "Primary Carrier",
+        "available": true,
+        "cost_per_unit": 5.0,
+        "transit_time_hours": 24,
+        "capacity_limit": 200
+      },
+      {
+        "id": "CR_2",
+        "name": "Express Carrier",
+        "available": true,
+        "cost_per_unit": 12.0,
+        "transit_time_hours": 8,
+        "capacity_limit": 80
+      }
+    ],
+    "customer_zones": [
+      {
+        "id": "CZ_1",
+        "name": "Standard Customer Zone",
+        "demand_units": 20,
+        "sla_deadline_hours": 48,
+        "sla_penalty_per_hour": 5.0
+      },
+      {
+        "id": "CZ_2",
+        "name": "Key Account Zone",
+        "demand_units": 10,
+        "sla_deadline_hours": 24,
+        "sla_penalty_per_hour": 10.0
+      }
+    ],
+    "current_disruptions": [
+      {
+        "type": "inventory_accuracy",
+        "description": "WMS stock count may not match physical pick-bin quantity",
+        "affected_entity": "WH_1"
+      }
+    ]
+  },
+  "evaluation_metadata": {
+    "second_best_cost": 380,
+    "oracle_gap_points": 200,
+    "ambiguity_gap_pct": 1.1111111111111112,
+    "ratio_2nd_best": 2.111111111111111,
+    "error_direction": "—",
+    "action_reversibility": "Partially Reversible"
+  },
+  "traceability_text": {
+    "trace_rationale_short": "The evidence supports trust even under high stakes because the inbound buffer is already visible to the system.",
+    "trace_key1": "Account tier=Key",
+    "trace_key2": "Receiving scan=Confirmed",
+    "trace_key3": "Transfer option=Emergency",
+    "trace_more": "Audit log stores receiving-scan ID, allocation status, and approval decision.",
+    "uncertainty_trigger1": "Key-account same-day commitment",
+    "uncertainty_trigger2": "Inbound batch scanned but not put away",
+    "recommended_check": "Check the receiving scan and open-allocation queue before release."
+  },
+  "feedback_text": {
+    "feedback_ai_outcome": "The spare part was available as expected, so the order cleared without the need for premium recovery action.",
+    "feedback_alt1_outcome": "The check confirmed the same availability, but the manual review and holding time were expensive under the account commitment.",
+    "feedback_alt2_outcome": "The emergency transfer was unnecessary and created premium handling without reducing real risk."
+  },
+  "metadata": {
+    "ground_truth_source": "TianshiWang_Redesigned_Scenario_Bank_v3.csv",
+    "snapshot_policy": "baseline_plus_scenario_delta",
+    "notes": [
+      "Canonical scenario mapping: 'Inventory Discrepancy' -> 'inventory_discrepancy'",
+      "initial_state_snapshot built from baseline_plus_scenario_delta; NOT the oracle truth source"
+    ]
+  }
+}

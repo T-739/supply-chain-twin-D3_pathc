@@ -1,0 +1,169 @@
+{
+  "case_id": "P05",
+  "block_type": "practice",
+  "recommended_order": 5,
+  "scenario_type": "Customer Service",
+  "scenario_id": "customer_service_recovery",
+  "scenario_config_ref": "data/scenarios/customer_service_recovery.json",
+  "risk_level": "LOW",
+  "service_stringency": "Std B2C",
+  "complexity_score": 2,
+  "ai_correct": true,
+  "oracle": {
+    "action_code": "AI",
+    "action_label": "Approve",
+    "cost_total": 70
+  },
+  "agent_recommendation_action_code": "AI",
+  "order_or_shipment_id": "CS-P05-1198",
+  "case_title": "Small proactive recovery on a mild delay",
+  "exception_description": "Order CS-P05-1198 will arrive about 2 hours late. The customer is a repeat buyer but has not complained. AI proposes sending an automatic delay notice with a small goodwill coupon.",
+  "layer1_visible": "Order CS-P05-1198 will arrive about 2 hours late. The customer is a repeat buyer but has not complained. AI proposes sending an automatic delay notice with a small goodwill coupon.",
+  "detail_expand": "The order value is moderate and the account has no recent escalations. Shipping is still on the same day, so the operational risk is limited. Doing nothing saves a small direct cost now, but can create an avoidable contact and complaint later if the delay surprises the customer during delivery.",
+  "ai_recommendation": "AI recommends sending the notice and small coupon because a light proactive recovery is cheaper than handling a preventable complaint later.",
+  "decision_options": [
+    {
+      "action_code": "AI",
+      "decision_type": "approve",
+      "action_label": "Send notice and small coupon now"
+    },
+    {
+      "action_code": "ALT1",
+      "decision_type": "verify_pause",
+      "action_label": "Pause to review recent order history"
+    },
+    {
+      "action_code": "ALT2",
+      "decision_type": "alternative_plan",
+      "action_label": "Do nothing and wait for customer contact"
+    }
+  ],
+  "cost_ground_truth": {
+    "AI": {
+      "c_direct": 40,
+      "c_outcome": 30,
+      "c_total": 70
+    },
+    "ALT1": {
+      "c_direct": 140,
+      "c_outcome": 70,
+      "c_total": 210
+    },
+    "ALT2": {
+      "c_direct": 100,
+      "c_outcome": 140,
+      "c_total": 240
+    }
+  },
+  "initial_state_snapshot": {
+    "timestamp": "2026-03-01T09:00:00Z",
+    "suppliers": [
+      {
+        "id": "SUP_1",
+        "name": "Primary Supplier",
+        "lead_time_days": 5,
+        "reliability_score": 0.92,
+        "capacity_units": 500,
+        "is_active": true
+      },
+      {
+        "id": "SUP_2",
+        "name": "Backup Supplier",
+        "lead_time_days": 9,
+        "reliability_score": 0.8,
+        "capacity_units": 200,
+        "is_active": true
+      }
+    ],
+    "warehouses": [
+      {
+        "id": "WH_1",
+        "name": "Primary Warehouse",
+        "location": "Montreal",
+        "max_capacity": 1000,
+        "current_inventory": 300,
+        "operating_cost_per_unit": 1.0
+      },
+      {
+        "id": "WH_2",
+        "name": "Reserve Warehouse",
+        "location": "Toronto",
+        "max_capacity": 600,
+        "current_inventory": 150,
+        "operating_cost_per_unit": 1.5
+      }
+    ],
+    "carriers": [
+      {
+        "id": "CR_1",
+        "name": "Primary Carrier",
+        "available": true,
+        "cost_per_unit": 5.0,
+        "transit_time_hours": 24,
+        "capacity_limit": 200
+      },
+      {
+        "id": "CR_2",
+        "name": "Express Carrier",
+        "available": true,
+        "cost_per_unit": 12.0,
+        "transit_time_hours": 8,
+        "capacity_limit": 80
+      }
+    ],
+    "customer_zones": [
+      {
+        "id": "CZ_1",
+        "name": "Standard Customer Zone",
+        "demand_units": 20,
+        "sla_deadline_hours": 48,
+        "sla_penalty_per_hour": 5.0
+      },
+      {
+        "id": "CZ_2",
+        "name": "Key Account Zone",
+        "demand_units": 10,
+        "sla_deadline_hours": 24,
+        "sla_penalty_per_hour": 10.0
+      }
+    ],
+    "current_disruptions": [
+      {
+        "type": "customer_sla_risk",
+        "description": "Customer-facing delay or dissatisfaction event; proactive recovery recommended",
+        "affected_entity": "CZ_1"
+      }
+    ]
+  },
+  "evaluation_metadata": {
+    "second_best_cost": 210,
+    "oracle_gap_points": 140,
+    "ambiguity_gap_pct": 2.0,
+    "ratio_2nd_best": 3.0,
+    "error_direction": "—",
+    "action_reversibility": "Reversible"
+  },
+  "traceability_text": {
+    "trace_rationale_short": "A small proactive recovery usually prevents costlier follow-up contacts.",
+    "trace_key1": "Delay≈2h",
+    "trace_key2": "Customer=Repeat buyer",
+    "trace_key3": "Coupon=Small",
+    "trace_more": "Audit log stores CRM tier, offer sent, and message timestamp.",
+    "uncertainty_trigger1": "Foreseeable 2-hour delay",
+    "uncertainty_trigger2": "Repeat buyer account",
+    "recommended_check": "Review the customer tier and recent-contact history in CRM."
+  },
+  "feedback_text": {
+    "feedback_ai_outcome": "The message prevented a complaint and the small coupon resolved the issue efficiently.",
+    "feedback_alt1_outcome": "The review confirmed the same plan, but the extra checking added delay and handling cost.",
+    "feedback_alt2_outcome": "No complaint occurred, so the heavier response created unnecessary recovery expense."
+  },
+  "metadata": {
+    "ground_truth_source": "TianshiWang_Redesigned_Scenario_Bank_v3.csv",
+    "snapshot_policy": "baseline_plus_scenario_delta",
+    "notes": [
+      "Canonical scenario mapping: 'Customer Service' -> 'customer_service_recovery'",
+      "initial_state_snapshot built from baseline_plus_scenario_delta; NOT the oracle truth source"
+    ]
+  }
+}
