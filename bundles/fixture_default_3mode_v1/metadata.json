@@ -1,0 +1,24 @@
+{
+  "bundle_id": "fixture_default_3mode_v1",
+  "bundle_schema_version": "1.0",
+  "has_compare_report": true,
+  "has_thesis_report": true,
+  "produced_by": "0.1.0",
+  "session_ids": {
+    "baseline_static": "FIXTURE-DEFAULT-BASELINE_STATIC",
+    "path_c_cold": "FIXTURE-DEFAULT-PATH_C_COLD",
+    "path_c_warm": "FIXTURE-DEFAULT-PATH_C_WARM"
+  },
+  "source": {
+    "kind": "fixture_builder",
+    "notes": "Deterministic synthetic fixture covering the default baseline_static / path_c_cold / path_c_warm trio.",
+    "origin": "build_default_3mode_fixture"
+  },
+  "variant_set": "default_3_mode",
+  "variant_tags": [
+    "baseline_static",
+    "path_c_cold",
+    "path_c_warm"
+  ],
+  "warnings": []
+}

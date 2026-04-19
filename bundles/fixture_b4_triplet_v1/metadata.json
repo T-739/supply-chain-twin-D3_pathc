@@ -1,0 +1,28 @@
+{
+  "bundle_id": "fixture_b4_triplet_v1",
+  "bundle_schema_version": "1.0",
+  "has_compare_report": true,
+  "has_thesis_report": false,
+  "produced_by": "0.1.0",
+  "session_ids": {
+    "baseline_static": "FIXTURE-B4-BASELINE_STATIC",
+    "path_c_warm_agent_visible_memory": "FIXTURE-B4-PATH_C_WARM_AGENT_VISIBLE_MEMORY",
+    "path_c_warm_policy_only": "FIXTURE-B4-PATH_C_WARM_POLICY_ONLY"
+  },
+  "source": {
+    "kind": "fixture_builder",
+    "notes": "Deterministic synthetic fixture covering the B4 experiment triplet (no path_c_cold).",
+    "origin": "build_b4_triplet_fixture"
+  },
+  "variant_set": "b4_experiment_triplet",
+  "variant_tags": [
+    "baseline_static",
+    "path_c_warm_policy_only",
+    "path_c_warm_agent_visible_memory"
+  ],
+  "warnings": [
+    "path_c_cold variant intentionally absent (B4 experiment triplet).",
+    "memory.jsonl present only for baseline_static (intentional null-safety coverage).",
+    "thesis_report.md intentionally omitted."
+  ]
+}

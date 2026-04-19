@@ -360,7 +360,14 @@ def _build_rationale_trace(
     # 2. Retrieved policy/evidence support
     evidence_refs = recommended.get("evidence_refs", [])
     if evidence_refs:
-        top_docs = list({ref.get("source_doc", "?") for ref in evidence_refs[:3]})
+        # Deterministic dedup: preserve first-seen order, no set iteration.
+        _seen: set[str] = set()
+        top_docs: list[str] = []
+        for ref in evidence_refs[:3]:
+            src = ref.get("source_doc", "?")
+            if src not in _seen:
+                _seen.add(src)
+                top_docs.append(src)
         parts.append(
             f"Policy evidence retrieved from: {', '.join(top_docs)}."
         )

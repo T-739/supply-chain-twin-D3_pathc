@@ -20,9 +20,59 @@ The output contract (OperationsOutput) is stable and JSON-serializable.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel, field_validator
+
+# ---------------------------------------------------------------------------
+# B4 Slice 2B — single-point prompt seam for agent-visible memory.
+#
+# See docs/B4_AGENT_VISIBLE_MEMORY_BOUNDARY.md §12 D1/D2/D3/D4/D5.
+# The operations agent is the single experiment target (D1). The
+# seam lives in ``_build_ops_llm_user_prompt`` only. The rules-mode
+# path (``run_operations_agent``) never reaches the seam, so its
+# byte output is unchanged under any B4 flag combination.
+#
+# This module consumes an already-built ``AgentMemoryContext`` from
+# the caller. It does NOT call ``build_agent_memory_context(...)``
+# itself (S7): when the runtime orchestrator wiring lands in a
+# later slice, the caller will own the builder call. As of Slice
+# 2B no caller inside this repo invokes this seam with a non-None
+# context — the seam is exercised only by ``tests/test_operations
+# _agent_agent_memory_seam.py``.
+# ---------------------------------------------------------------------------
+
+from agent_memory.agent_memory_config import AgentMemoryExperimentConfig
+from agent_memory.agent_memory_renderer import render_agent_memory_context
+from agent_memory.agent_memory_schema import AgentMemoryContext
+
+#: Fixed section delimiters around the renderer output. Values
+#: are stable under all flag combinations; renderer output itself
+#: is byte-deterministic (see agent_memory_renderer tests). The
+#: OFF path never emits either delimiter.
+_B4_SECTION_HEADER: str = "HISTORICAL_STRUCTURED_MEMORY_CONTEXT"
+_B4_SECTION_FOOTER: str = "END_HISTORICAL_STRUCTURED_MEMORY_CONTEXT"
+
+
+def _b4_should_inject(
+    agent_memory_context: Optional[AgentMemoryContext],
+    agent_memory_config: Optional[AgentMemoryExperimentConfig],
+) -> bool:
+    """Return True iff the five S3 conditions hold.
+
+    Any one of them missing → OFF path. Ordering is exhaustive
+    AND; short-circuiting on ``None`` keeps the check cheap in
+    the default-off case.
+    """
+    if agent_memory_context is None:
+        return False
+    if agent_memory_config is None:
+        return False
+    if not agent_memory_config.enable_agent_visible_memory:
+        return False
+    if agent_memory_config.target_agent != "operations":
+        return False
+    return True
 
 # ---------------------------------------------------------------------------
 # Phase 4 — Operations Agent dual-mode (rules / llm)
@@ -737,6 +787,9 @@ def _build_ops_llm_system_prompt() -> str:
 def _build_ops_llm_user_prompt(
     baseline: OperationsOutput,
     scenario_context: dict[str, Any],
+    *,
+    agent_memory_context: Optional[AgentMemoryContext] = None,
+    agent_memory_config: Optional[AgentMemoryExperimentConfig] = None,
 ) -> str:
     import json as _json
     facts = {
@@ -756,7 +809,7 @@ def _build_ops_llm_user_prompt(
             for c in baseline.ranked_candidates
         ],
     }
-    return (
+    prompt = (
         "Refine the rationale (and feasibility_reason for infeasible "
         "candidates) of each operational candidate listed below. Preserve "
         "every candidate_id verbatim. Return a JSON object of this shape:\n"
@@ -770,6 +823,25 @@ def _build_ops_llm_user_prompt(
         "numeric value or candidate_type.\n\n"
         f"Facts:\n{_json.dumps(facts, indent=2, default=str)}\n"
     )
+
+    # B4 Slice 2B single-point injection (S3 / S4 / S5). OFF path
+    # returns ``prompt`` unchanged — the whole block below is a
+    # no-op unless all five S3 conditions hold.
+    if _b4_should_inject(agent_memory_context, agent_memory_config):
+        rendered = render_agent_memory_context(
+            agent_memory_context, agent_memory_config
+        )
+        prompt = (
+            prompt
+            + "\n"
+            + _B4_SECTION_HEADER
+            + "\n"
+            + rendered
+            + "\n"
+            + _B4_SECTION_FOOTER
+            + "\n"
+        )
+    return prompt
 
 
 def _deterministic_ops_fallback(baseline: OperationsOutput):
@@ -797,9 +869,18 @@ def _enrich_ops_with_llm(
     scenario_context: dict[str, Any],
     *,
     gateway_config: Any = None,
+    agent_memory_context: Optional[AgentMemoryContext] = None,
+    agent_memory_config: Optional[AgentMemoryExperimentConfig] = None,
 ) -> tuple[OperationsOutput, dict[str, Any]]:
     """Run the Phase 2 gateway and return (possibly-enriched OperationsOutput,
-    meta_dict). On any enrichment failure returns the baseline unchanged."""
+    meta_dict). On any enrichment failure returns the baseline unchanged.
+
+    ``agent_memory_context`` / ``agent_memory_config`` are the B4
+    Slice 2B prompt-seam inputs. Both default to ``None`` and are
+    a byte no-op on the enrichment meta / output shape — they only
+    influence the LLM user prompt bytes when the five S3 conditions
+    hold.
+    """
     llm_meta: dict[str, Any] = {"enriched_fields": [], "trace": None}
 
     try:
@@ -809,7 +890,12 @@ def _enrich_ops_with_llm(
         return baseline, llm_meta
 
     system = _build_ops_llm_system_prompt()
-    prompt = _build_ops_llm_user_prompt(baseline, scenario_context)
+    prompt = _build_ops_llm_user_prompt(
+        baseline,
+        scenario_context,
+        agent_memory_context=agent_memory_context,
+        agent_memory_config=agent_memory_config,
+    )
 
     result = generate_structured(
         prompt,
@@ -919,17 +1005,26 @@ def run_operations_agent_llm(
     gateway_config: Any = None,
     retrieval_mode: str | None = None,
     retrieval_k: int = 4,
+    agent_memory_context: Optional[AgentMemoryContext] = None,
+    agent_memory_config: Optional[AgentMemoryExperimentConfig] = None,
 ) -> OperationsOutput:
     """Deterministic candidate generation + LLM language enrichment.
 
     On any enrichment failure returns the deterministic baseline unchanged.
+
+    ``agent_memory_context`` / ``agent_memory_config`` are the B4
+    Slice 2B optional prompt-seam inputs; both default to ``None``
+    and preserve pre-B4 byte identity on the OFF path.
     """
     baseline = run_operations_agent(
         twin_state, scenario_context, order_units,
         retrieval_mode=retrieval_mode, retrieval_k=retrieval_k,
     )
     enriched, _ = _enrich_ops_with_llm(
-        baseline, scenario_context, gateway_config=gateway_config,
+        baseline, scenario_context,
+        gateway_config=gateway_config,
+        agent_memory_context=agent_memory_context,
+        agent_memory_config=agent_memory_config,
     )
     return enriched
 
@@ -943,11 +1038,19 @@ def run_operations_agent_modeful(
     gateway_config: Any = None,
     retrieval_mode: str | None = None,
     retrieval_k: int = 4,
+    agent_memory_context: Optional[AgentMemoryContext] = None,
+    agent_memory_config: Optional[AgentMemoryExperimentConfig] = None,
 ) -> OperationsOutput:
     """Entry point that dispatches by operations mode.
 
     Both modes return a schema-valid OperationsOutput. Unknown modes degrade
     to 'rules'.
+
+    The ``agent_memory_*`` kwargs are the B4 Slice 2B optional
+    prompt-seam inputs. They reach the prompt builder only on the
+    ``llm`` branch; the ``rules`` branch ignores them entirely,
+    preserving rules-mode byte identity under any B4 flag
+    combination.
     """
     resolved = _resolve_ops_mode(mode)
     if resolved == "llm":
@@ -955,6 +1058,8 @@ def run_operations_agent_modeful(
             twin_state, scenario_context, order_units,
             gateway_config=gateway_config,
             retrieval_mode=retrieval_mode, retrieval_k=retrieval_k,
+            agent_memory_context=agent_memory_context,
+            agent_memory_config=agent_memory_config,
         )
     return run_operations_agent(
         twin_state, scenario_context, order_units,
@@ -971,6 +1076,8 @@ def run_operations_agent_with_meta(
     gateway_config: Any = None,
     retrieval_mode: str | None = None,
     retrieval_k: int = 4,
+    agent_memory_context: Optional[AgentMemoryContext] = None,
+    agent_memory_config: Optional[AgentMemoryExperimentConfig] = None,
 ) -> tuple[OperationsOutput, dict[str, Any]]:
     """Run the Operations Agent and return (output, meta) for graph plumbing.
 
@@ -989,7 +1096,10 @@ def run_operations_agent_with_meta(
         )
         retrieval_summary = _get_last_retrieval_trace_summary()
         enriched, llm_meta = _enrich_ops_with_llm(
-            baseline, scenario_context, gateway_config=gateway_config,
+            baseline, scenario_context,
+            gateway_config=gateway_config,
+            agent_memory_context=agent_memory_context,
+            agent_memory_config=agent_memory_config,
         )
         meta = {
             "mode": "llm",

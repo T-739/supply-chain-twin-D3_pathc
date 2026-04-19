@@ -1,0 +1,26 @@
+{
+  "baseline_mode": "baseline_static",
+  "deltas": {},
+  "diverged_events": [],
+  "kpi_matrix": {
+    "cold_phase": {},
+    "overall": {},
+    "warm_phase": {}
+  },
+  "min_records_for_shift": 3,
+  "per_session_kpi_report": {},
+  "schema_version": "1.1",
+  "sessions_compared": [
+    "baseline_static",
+    "path_c_warm_agent_visible_memory",
+    "path_c_warm_policy_only"
+  ],
+  "thesis_claim_support": {
+    "claim": "Path C extends calibrated supervision into a temporally adaptive semi-autonomy loop.",
+    "notes": "Fixture compare report; no runtime computation.",
+    "supports_claim": null,
+    "warm_calibrated_autonomy_delta": null,
+    "warm_cost_delta": null,
+    "warm_sla_preservation_delta": null
+  }
+}

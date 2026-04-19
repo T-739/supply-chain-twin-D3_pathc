@@ -389,6 +389,246 @@ class TwinState(BaseModel):
         self.current_disruptions.append(shock_config)
 
     # ------------------------------------------------------------------
+    # D3 Phase 2: Event hot-patch
+    # ------------------------------------------------------------------
+
+    def apply_event_patch(self, event) -> None:
+        """Apply a deterministic state mutation for an EventPayload.
+
+        Translates event type + parameters into entity patches using the
+        same atomic discipline as inject_shock(): validates on a deep-copy
+        draft first, commits only if all patches succeed.
+
+        Supported event types and their required parameters:
+          CARRIER_DELAY_ESCALATION: delta_hours (float, >0)
+          WEATHER_WORSENING:        delta_eta_hours (float, >0)
+          DEMAND_SPIKE:             delta_units (int, >0)
+          INVENTORY_DISCREPANCY:    delta_units (int, typically <0)
+          CUSTOMER_CANCELLATION:    delta_units (int, typically <0)
+          COMPLIANCE_HOLD:          (no extra params; sets entity inactive/unavailable)
+
+        Records event summary in current_disruptions on success.
+        Does NOT write outcomes, evaluation truth, or operational actions.
+
+        Parameters
+        ----------
+        event : EventPayload
+            Immutable event record from event_schema.py.
+            Imported late to avoid circular dependency at module level.
+
+        Raises
+        ------
+        ValueError
+            If required parameters are missing or patch violates constraints.
+        KeyError
+            If affected entity not found in state.
+        """
+        from event_schema import EventType
+
+        etype = event.event_type
+        params = event.parameters
+        affected = event.affected_entities
+
+        # --- Build patch list in inject_shock format ---
+        patches: list[dict] = []
+
+        if etype == EventType.CARRIER_DELAY_ESCALATION:
+            delta = params.get("delta_hours")
+            if delta is None or delta <= 0:
+                raise ValueError(
+                    f"CARRIER_DELAY_ESCALATION requires delta_hours > 0, got {delta!r}"
+                )
+            for ref in affected:
+                if ref.entity_type != "carrier":
+                    continue
+                patches.append({
+                    "entity_type": "carrier",
+                    "entity_id": ref.entity_id,
+                    "op": "add",
+                    "field": "transit_time_hours",
+                    "value": float(delta),
+                })
+
+        elif etype == EventType.WEATHER_WORSENING:
+            delta = params.get("delta_eta_hours")
+            if delta is None or delta <= 0:
+                raise ValueError(
+                    f"WEATHER_WORSENING requires delta_eta_hours > 0, got {delta!r}"
+                )
+            patches.append({
+                "entity_type": "twin",
+                "entity_id": "",
+                "op": "add",
+                "field": "planned_eta_hours",
+                "value": float(delta),
+            })
+
+        elif etype == EventType.DEMAND_SPIKE:
+            delta = params.get("delta_units")
+            if delta is None or delta <= 0:
+                raise ValueError(
+                    f"DEMAND_SPIKE requires delta_units > 0, got {delta!r}"
+                )
+            for ref in affected:
+                if ref.entity_type != "customer_zone":
+                    continue
+                patches.append({
+                    "entity_type": "customer_zone",
+                    "entity_id": ref.entity_id,
+                    "op": "add",
+                    "field": "demand_units",
+                    "value": int(delta),
+                })
+
+        elif etype == EventType.INVENTORY_DISCREPANCY:
+            delta = params.get("delta_units")
+            if delta is None:
+                raise ValueError(
+                    "INVENTORY_DISCREPANCY requires delta_units (typically < 0)"
+                )
+            for ref in affected:
+                if ref.entity_type != "warehouse":
+                    continue
+                patches.append({
+                    "entity_type": "warehouse",
+                    "entity_id": ref.entity_id,
+                    "op": "add",
+                    "field": "current_inventory",
+                    "value": int(delta),
+                })
+
+        elif etype == EventType.CUSTOMER_CANCELLATION:
+            delta = params.get("delta_units")
+            if delta is None:
+                raise ValueError(
+                    "CUSTOMER_CANCELLATION requires delta_units (typically < 0)"
+                )
+            for ref in affected:
+                if ref.entity_type != "customer_zone":
+                    continue
+                patches.append({
+                    "entity_type": "customer_zone",
+                    "entity_id": ref.entity_id,
+                    "op": "add",
+                    "field": "demand_units",
+                    "value": int(delta),
+                })
+
+        elif etype == EventType.COMPLIANCE_HOLD:
+            for ref in affected:
+                if ref.entity_type == "carrier":
+                    patches.append({
+                        "entity_type": "carrier",
+                        "entity_id": ref.entity_id,
+                        "op": "set",
+                        "field": "available",
+                        "value": False,
+                    })
+                elif ref.entity_type == "supplier":
+                    patches.append({
+                        "entity_type": "supplier",
+                        "entity_id": ref.entity_id,
+                        "op": "set",
+                        "field": "is_active",
+                        "value": False,
+                    })
+                else:
+                    raise ValueError(
+                        f"COMPLIANCE_HOLD: unsupported entity_type '{ref.entity_type}' "
+                        f"(only carrier and supplier are supported)"
+                    )
+
+        else:
+            raise ValueError(f"Unsupported event type: {etype}")
+
+        if not patches:
+            raise ValueError(
+                f"Event {event.event_id} ({etype.value}) produced no patches. "
+                f"Check affected_entities match expected entity_types."
+            )
+
+        # --- Atomic application (same discipline as inject_shock) ---
+        draft = self.model_copy(deep=True)
+        _run_patches(draft, patches)
+
+        # Commit: all patches known-good
+        _run_patches(self, patches)
+
+        # Record event summary in current_disruptions
+        self.current_disruptions.append({
+            "source": "event_patch",
+            "event_id": event.event_id,
+            "event_type": event.event_type.value,
+            "severity": event.severity.value,
+            "patches_applied": len(patches),
+        })
+
+    # ------------------------------------------------------------------
+    # D3 Phase 3: Outcome delta re-application (narrow utility)
+    # ------------------------------------------------------------------
+
+    def apply_action_outcome(self, outcome) -> None:
+        """Validated re-application of ExecutionOutcome.state_delta to this state.
+
+        Narrow utility — REPLAY-ONLY, not called on the main Phase 3 event-
+        loop path. Phase 3 adapters mutate their own deep-copied TwinState
+        via apply_action() and return it. This method exists so that a
+        standalone outcome record (persisted, piped to a test, or replayed
+        by a future sidecar) can be safely re-applied to a TwinState instance
+        without introducing a third mutation style.
+
+        Uses the same discipline as inject_shock / apply_event_patch:
+          - reads ``outcome.state_delta["patches"]`` (list of _run_patches-
+            format patches; all adapter-produced state_delta uses ``set`` ops
+            so re-application is idempotent on already-adapter-mutated state)
+          - validates on a deep-copy draft first
+          - commits to ``self`` only after the draft succeeds
+
+        If ``state_delta`` contains no patches (e.g. COMPENSATE / NO_ACTION
+        outcomes, which carry descriptive-only delta), this is a safe no-op.
+
+        The method does NOT:
+          - compute costs (adapters already computed cost at execution time)
+          - touch evaluation or oracle truth
+          - introduce new identifier layers
+          - write to current_disruptions (outcomes are a separate audit trail)
+
+        Parameters
+        ----------
+        outcome : ExecutionOutcome
+            Imported late to avoid circular dependency at module load time.
+
+        Raises
+        ------
+        ValueError
+            If state_delta is not a dict, or any patch fails validation.
+        KeyError
+            If any patch targets a non-existent entity.
+            State is left completely unchanged on any error (atomic rollback).
+        """
+        state_delta = getattr(outcome, "state_delta", None) or {}
+        if not isinstance(state_delta, dict):
+            raise ValueError(
+                f"outcome.state_delta must be a dict, got {type(state_delta).__name__}"
+            )
+        patches = state_delta.get("patches") or []
+        if not patches:
+            # Descriptive-only delta; nothing to re-apply.
+            return
+        if not isinstance(patches, list):
+            raise ValueError(
+                f"outcome.state_delta['patches'] must be a list, "
+                f"got {type(patches).__name__}"
+            )
+
+        # ── Validation phase ──────────────────────────────────────────────
+        draft = self.model_copy(deep=True)
+        _run_patches(draft, patches)
+
+        # ── Commit phase ──────────────────────────────────────────────────
+        _run_patches(self, patches)
+
+    # ------------------------------------------------------------------
     # Action application
     # ------------------------------------------------------------------
 

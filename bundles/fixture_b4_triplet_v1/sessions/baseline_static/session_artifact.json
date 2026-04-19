@@ -1,0 +1,172 @@
+{
+  "config": {
+    "events_source": "fixture_stream",
+    "initial_memory_digest": "",
+    "mode": "BASELINE_STATIC",
+    "schema_version": "1.0",
+    "seed": 42
+  },
+  "event_records": [
+    {
+      "adaptive_adjustment": null,
+      "baseline_event_result": {
+        "event_id": "FIXTURE-B4-BASELINE_STATIC-EV-000",
+        "event_type": "CARRIER_DELAY_ESCALATION",
+        "execution_outcome": {
+          "cost_incurred": 100.0,
+          "sla_impact": {
+            "preserved": true
+          }
+        },
+        "execution_status": "executed",
+        "governance_output": {
+          "recommended_action": "EXPEDITE",
+          "risk_level": "MEDIUM"
+        },
+        "policy_decision": {},
+        "scenario_context": {},
+        "schema_version": "1.0",
+        "severity": "MEDIUM",
+        "trace_log": []
+      },
+      "correlation_context": null,
+      "effective_decision": {
+        "action_taken": "EXPEDITE",
+        "effective_risk": "MEDIUM",
+        "execution_status": "executed",
+        "final_route": "AUTO_EXECUTE",
+        "schema_version": "1.0"
+      },
+      "governance_truth": {
+        "recommended_candidate_type": "EXPEDITE",
+        "risk_level": "MEDIUM",
+        "schema_version": "1.0"
+      },
+      "memory_record_id": null,
+      "mode": "BASELINE_STATIC",
+      "notes": "",
+      "policy_route_source": "baseline_static",
+      "replan_trace": null,
+      "replan_triggers": null,
+      "schema_version": "1.2",
+      "session_id": "FIXTURE-B4-BASELINE_STATIC"
+    },
+    {
+      "adaptive_adjustment": null,
+      "baseline_event_result": {
+        "event_id": "FIXTURE-B4-BASELINE_STATIC-EV-001",
+        "event_type": "CARRIER_DELAY_ESCALATION",
+        "execution_outcome": {
+          "cost_incurred": 101.0,
+          "sla_impact": {
+            "preserved": true
+          }
+        },
+        "execution_status": "executed",
+        "governance_output": {
+          "recommended_action": "EXPEDITE",
+          "risk_level": "MEDIUM"
+        },
+        "policy_decision": {},
+        "scenario_context": {},
+        "schema_version": "1.0",
+        "severity": "MEDIUM",
+        "trace_log": []
+      },
+      "correlation_context": null,
+      "effective_decision": {
+        "action_taken": "EXPEDITE",
+        "effective_risk": "MEDIUM",
+        "execution_status": "executed",
+        "final_route": "AUTO_EXECUTE",
+        "schema_version": "1.0"
+      },
+      "governance_truth": {
+        "recommended_candidate_type": "EXPEDITE",
+        "risk_level": "MEDIUM",
+        "schema_version": "1.0"
+      },
+      "memory_record_id": null,
+      "mode": "BASELINE_STATIC",
+      "notes": "",
+      "policy_route_source": "baseline_static",
+      "replan_trace": null,
+      "replan_triggers": null,
+      "schema_version": "1.2",
+      "session_id": "FIXTURE-B4-BASELINE_STATIC"
+    },
+    {
+      "adaptive_adjustment": null,
+      "baseline_event_result": {
+        "event_id": "FIXTURE-B4-BASELINE_STATIC-EV-002",
+        "event_type": "CARRIER_DELAY_ESCALATION",
+        "execution_outcome": {
+          "cost_incurred": 102.0,
+          "sla_impact": {
+            "preserved": true
+          }
+        },
+        "execution_status": "executed",
+        "governance_output": {
+          "recommended_action": "EXPEDITE",
+          "risk_level": "MEDIUM"
+        },
+        "policy_decision": {},
+        "scenario_context": {},
+        "schema_version": "1.0",
+        "severity": "MEDIUM",
+        "trace_log": []
+      },
+      "correlation_context": null,
+      "effective_decision": {
+        "action_taken": "EXPEDITE",
+        "effective_risk": "MEDIUM",
+        "execution_status": "executed",
+        "final_route": "AUTO_EXECUTE",
+        "schema_version": "1.0"
+      },
+      "governance_truth": {
+        "recommended_candidate_type": "EXPEDITE",
+        "risk_level": "MEDIUM",
+        "schema_version": "1.0"
+      },
+      "memory_record_id": null,
+      "mode": "BASELINE_STATIC",
+      "notes": "",
+      "policy_route_source": "baseline_static",
+      "replan_trace": null,
+      "replan_triggers": null,
+      "schema_version": "1.2",
+      "session_id": "FIXTURE-B4-BASELINE_STATIC"
+    }
+  ],
+  "kpis": {
+    "auto_execute_success_rate": 1.0,
+    "avg_cost": 101.0,
+    "events_failed": 0,
+    "events_observed": 3,
+    "events_processed": 3,
+    "events_skipped": 0,
+    "events_with_outcome": 3,
+    "known_outcome_coverage": 1.0,
+    "replan_events_observed": 0,
+    "replan_fire_count": 0,
+    "replan_recovery_rate": null,
+    "replan_success_count": 0,
+    "replan_trigger_rate": null,
+    "schema_version": "1.1",
+    "sla_preservation_rate": 1.0,
+    "total_cost": 303.0
+  },
+  "memory_snapshot": {
+    "records": []
+  },
+  "notes": "B5 fixture synthesized via tools/bundler/fixture_builder.py",
+  "schema_version": "1.0",
+  "schema_versions": {
+    "session_artifact": "1.0",
+    "session_event_record": "1.2",
+    "session_kpis": "1.1"
+  },
+  "session_id": "FIXTURE-B4-BASELINE_STATIC"
+}

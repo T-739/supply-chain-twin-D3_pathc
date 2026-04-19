@@ -1,0 +1,67 @@
+﻿Section,Topic,Final decision / setting,Explanation
+A. 核心定位与边界,项目身份,Path C 是 owner-defined new stage，不是原 roadmap 的顺手延续,不能把它理解成“Path B 后面继续加几个模块”
+A. 核心定位与边界,Path C-min 范围,只做 Phase 0 / 1 / 2 / 3,后续只列 backlog / next steps，不展开实现
+A. 核心定位与边界,Phase 0,Contract freeze + baseline snapshot + boundary hardening,开始任何 learning/adaptive 代码之前先冻结
+A. 核心定位与边界,Phase 1,Episodic memory core + session skeleton + persistence,memory 先“被写入”，暂时不消费
+A. 核心定位与边界,Phase 2,Adaptive policy gate + cold-start guard + execution hardening,learning 只影响 policy/autonomy 层
+A. 核心定位与边界,Phase 3,Session eval harness + A/B compare + thesis-facing reports,用于验证 Path C-min 是否成立
+A. 核心定位与边界,React / frontend,后置 product surface，不属于 Path C core intelligence,只消费 frozen contracts，不定义 intelligence
+A. 核心定位与边界,Replan,不进 Path C-min,进入 backlog，后续单独 owner decision
+A. 核心定位与边界,Event correlator,不进 Path C-min,进入 backlog，后续单独 owner decision
+A. 核心定位与边界,Agent-visible memory,不进 Path C-min mainline,只作为未来独立实验支线
+A. 核心定位与边界,Cross-session cumulative memory,不进 Path C-min mainline,先支持 within-session；跨 session 作为显式 opt-in / backlog
+B. 不可协商原则,Deterministic-first,数值、cost、label、evaluation 均保持 deterministic-first,learning 不能引入黑盒参数漂移
+B. 不可协商原则,Truth boundary,Research Core 与 runtime memory/session 完全隔离,runtime outcome 不得污染 oracle truth
+B. 不可协商原则,Layer separation,operational / supervision / evaluation 三层严格分离,不能混 token，不能跨层 shortcut
+B. 不可协商原则,Bounded action set,仍然只围绕 4 个 operational actions,不做 open-ended action generation
+B. 不可协商原则,Auditability / traceability,adaptive shift、session compare、execution path 都必须可追溯,不能只“看起来更智能”
+B. 不可协商原则,Additive-only discipline,默认 wrapper-first / new-layer-first，但不是教条,真正红线是 contract 与语义不能漂
+B. 不可协商原则,No new mutation style,不引入新的 state mutation 风格,继续沿用 _run_patches / apply_action 既有纪律
+C. Path B → Path C 的关键现实判断,Path B 已完成什么,Path B backend core 已具备 event → patch → reason → route → execute → outcome → summary 的闭环骨架,这是 Path C 的基底
+C. Path B → Path C 的关键现实判断,Path B 最大真实 gap,outcome_summary 在 Path B 中是 plumbed but not consumed,所以闭环是 structural，不是 behavioral
+C. Path B → Path C 的关键现实判断,Path C 真正第一目标,证明跨事件 / 跨 session 的 calibrated semi-autonomy improvement,不是“让系统更聪明”
+C. Path B → Path C 的关键现实判断,Path C 的 learning 定义,structured episodic memory + deterministic query + bounded adaptation,不是 ML 训练，不是 finetune，不是 prompt stuffing
+C. Path B → Path C 的关键现实判断,Path C 的第一消费者,adaptive policy gate,mainline 不改 V2 agents，不让 agent 直接读 memory
+D. Session / Memory / Learning 的正式设定,Session 定义,一次 run_event_loop / event_loop_c 的完整调用,最稳、最易 replay
+D. Session / Memory / Learning 的正式设定,默认 memory 语义,within-session only,session 结束默认不自动跨 session 累积
+D. Session / Memory / Learning 的正式设定,Cross-session,作为显式 opt-in / backlog,不默认启用
+D. Session / Memory / Learning 的正式设定,Persistence,JSONL（append-only）+ JSON artifact,审计友好、diff 友好
+D. Session / Memory / Learning 的正式设定,Session ID,确定性 hash，基于 seed + config + event stream + initial memory digest,不使用 wall-clock，不使用 uuid4
+D. Session / Memory / Learning 的正式设定,Memory 原子单位,完整的 event → policy → execution 链,不能只存 outcome
+D. Session / Memory / Learning 的正式设定,MemoryQuery,先窄维度：event_type / risk_level / action_taken / recent_n,控制复杂度
+D. Session / Memory / Learning 的正式设定,MemorySummary,先保持结构化 numeric/statistical，不做 narrative layer,避免把 LLM 再拉回主决策路径
+D. Session / Memory / Learning 的正式设定,policy-only learning,learning 只通过 decide_policy_adaptive(memory=...) 注入系统,不通过 agent prompt，不通过 GovernanceOutput 改写
+E. Adaptive policy 的正式设定,Adaptive 粒度,第一版按 event_type 学,不上来就 event_type × action_type
+E. Adaptive policy 的正式设定,Shift 方向,只允许更保守的 UPGRADE,Path C-min 不做自动 downgrade
+E. Adaptive policy 的正式设定,Shift 幅度,一次只升一级,不允许 LOW→HIGH 跨级跳
+E. Adaptive policy 的正式设定,Cold-start guard,有，且 fallback 到 baseline static policy,memory 稀疏时不应乱调
+E. Adaptive policy 的正式设定,Cold-start threshold,config 化，默认值先设 3,不建议写死为概念常量
+E. Adaptive policy 的正式设定,Adjustment carrier,放在 Path C overlay / SessionEventRecord.adaptive_adjustment,不改 PolicyDecision 5-field schema
+E. Adaptive policy 的正式设定,Explainability,结构化 explainability，不靠长文本,rule_id / query_signature / memory_evidence / pre-post change 全部可追溯
+F. Data / schema / record layering 的正式设定,Layering,明确区分 3 层：Path B raw output / Path C session overlay / Path C session artifact,避免 Path C 再次污染 baseline
+F. Data / schema / record layering 的正式设定,Path B event_result,继续冻结,不再在后续 phase 里继续加 Path C 字段
+F. Data / schema / record layering 的正式设定,Path C SessionEventRecord,作为 overlay envelope 包住 baseline_event_result,Path C 元数据都放在这里
+F. Data / schema / record layering 的正式设定,Governance truth vs effective decision,双轨记录，永不塌缩成一个值,不能把 adaptive 后的 route/risk 误当成 governance 原话
+F. Data / schema / record layering 的正式设定,Versioning policy,明确采用 MAJOR.MINOR 规则,任何 schema drift 都必须 version bump 并更新 registry/fixtures
+F. Data / schema / record layering 的正式设定,outcome_summary version,在 Path C 入口前就加 schema_version,这是必要的小型 additive hardening
+G. Execution / runtime hardening 的正式设定,Path C 主路径执行解析,"metadata-validated, text-fallback forbidden",Path C 不能再依赖 free-text parsing
+G. Execution / runtime hardening 的正式设定,Preflight,在 Path C 主路径执行前，先验证 _governance_meta 的存在与 shape,避免 execution contract 继续模糊
+G. Execution / runtime hardening 的正式设定,Path B backward compatibility,require_metadata=False 的旧行为仅留给 Path B,Path C 主路径只用 require_metadata=True
+G. Execution / runtime hardening 的正式设定,GovernanceOutput,永远不改 8-field schema,learning/adaptive 不得塞进去
+G. Execution / runtime hardening 的正式设定,V2 agents,Path C-min 中完全不改,保持 baseline 可比性与回归网
+H. KPI / compare / 验收的正式设定,主 KPI,sla_preservation_rate / avg_cost_per_event / calibrated_autonomy_score,对应成本、服务、校准三个维度
+H. KPI / compare / 验收的正式设定,诊断 KPI,human_escalation_rate / auto_execute_rate,用于解释 route distribution
+H. KPI / compare / 验收的正式设定,额外诊断,known_outcome_coverage,说明 compare 时 outcome 覆盖程度
+H. KPI / compare / 验收的正式设定,Compare modes,BASELINE_STATIC / PATH_C_COLD / PATH_C_WARM,三模式 A/B 对照
+H. KPI / compare / 验收的正式设定,Cold-run compare 口径,只保证 cold phase 行为与 baseline 相同；长 session 的 warm phase 可开始分化,不再误写成整个 session 一定相同
+H. KPI / compare / 验收的正式设定,Thesis-facing claim,Path C extends calibrated supervision into a temporally adaptive semi-autonomy loop,用于报告与答辩统一叙事
+H. KPI / compare / 验收的正式设定,Acceptance gate,每 phase 都分 contract / behavior / test / rollback acceptance,方便 owner gate review
+I. 明确冻结 / 明确不动 / 明确 backlog 的内容,绝对不动,evaluation.py、action_code_mapper.py、data/cases/*.json、GovernanceOutput 8-field semantics,
+I. 明确冻结 / 明确不动 / 明确 backlog 的内容,Path B freeze 后不再触碰,twin_state.py、graph.py、event_loop.py 主体、policy_gate.py 主体、V2 agents 主体,
+I. 明确冻结 / 明确不动 / 明确 backlog 的内容,允许 additive extend,Path C 新目录、wrapper orchestrator、session/memory/adaptive 层、少量 versioning/hardening,
+I. 明确冻结 / 明确不动 / 明确 backlog 的内容,明确 backlog,replan、event correlator、cross-session cumulative memory、agent-visible episodic memory experiment、React/frontend product surface,
+J. 当前仍保留为“后续再定”的少数点,min_records_for_shift 默认值,暂定 3，但应视作 config 默认，不是理论常数,后续可根据 eval 再调
+J. 当前仍保留为“后续再定”的少数点,Replan expected cost contract,未定义,backlog，不进 Path C-min
+J. 当前仍保留为“后续再定”的少数点,Correlation representation,未定义,backlog，不进 Path C-min
+J. 当前仍保留为“后续再定”的少数点,Cross-session merge semantics,未定义,backlog，不进 Path C-min
+J. 当前仍保留为“后续再定”的少数点,Agent-visible memory branch,仅列为未来实验支线,需单独 owner decision

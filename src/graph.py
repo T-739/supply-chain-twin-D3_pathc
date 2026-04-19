@@ -68,8 +68,8 @@ class GraphState(TypedDict, total=False):
     supervisor_output: dict[str, Any]       # structured SupervisorDecision
 
     # --- Legacy supervisor fields (kept for backward compat) ---
-    supervisor_decision: str          # AI / ALT1 / ALT2
-    final_decision_code: str          # same domain, after any override logic
+    supervisor_decision: str          # APPROVE / VERIFY / OVERRIDE (supervision layer)
+    final_decision_code: str          # same domain (supervision layer)
 
     # --- Governance mode (Phase 3) ---
     # Optional. "rules" (default) or "llm". Unknown values degrade to "rules".
@@ -163,10 +163,19 @@ def operations_agent_node(state: GraphState) -> GraphState:
     gateway_config = state.get("operations_gateway_config")
     retrieval_mode = state.get("retrieval_mode")
     retrieval_k = state.get("retrieval_k") or 4
+    # B4 Slice 2C — read the optional sideband threaded through
+    # GraphState by ``event_loop._run_reasoning_slice``. Both
+    # defaults preserve pre-B4 byte identity; the agent-side
+    # ``_b4_should_inject`` predicate (Slice 2B) is the final
+    # gate.
+    agent_memory_context = state.get("_agent_memory_context")
+    agent_memory_config = state.get("_agent_memory_config")
     ops_output, ops_meta = run_operations_agent_with_meta(
         twin_state, scenario_context,
         mode=mode, gateway_config=gateway_config,
         retrieval_mode=retrieval_mode, retrieval_k=int(retrieval_k),
+        agent_memory_context=agent_memory_context,
+        agent_memory_config=agent_memory_config,
     )
     state["operations_output"] = ops_output.to_dict()
     state["_operations_meta"] = ops_meta
