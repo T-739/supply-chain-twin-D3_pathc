@@ -1,0 +1,138 @@
+{
+  "agent_memory_experiment_summary": {
+    "agent_visible_vs_policy_only_diverged_event_ids": [
+      "EV-006"
+    ],
+    "notes": "B4 agent-visible memory experiment compare-only summary. Structural-only: variant tags + session_ids + diverged event ids between the policy-only and agent-visible PATH_C_WARM variants. No KPI deltas, no agent-output paraphrase.",
+    "schema_version": "1.0",
+    "session_ids_by_variant": {
+      "baseline_static": "DEMO-SHOWCASE-B4-BASELINE_STATIC",
+      "path_c_warm_agent_visible_memory": "DEMO-SHOWCASE-B4-PATH_C_WARM_AGENT_VISIBLE_MEMORY",
+      "path_c_warm_policy_only": "DEMO-SHOWCASE-B4-PATH_C_WARM_POLICY_ONLY"
+    },
+    "variant_tags": [
+      "baseline_static",
+      "path_c_warm_policy_only",
+      "path_c_warm_agent_visible_memory"
+    ]
+  },
+  "baseline_mode": "baseline_static",
+  "deltas": {
+    "path_c_warm_agent_visible_memory_minus_baseline_static": {
+      "auto_execute_rate": 0.1428,
+      "calibrated_autonomy_score": 0.1428,
+      "human_escalation_rate": -0.1428,
+      "sla_preservation_rate": 0.1429
+    },
+    "path_c_warm_policy_only_minus_baseline_static": {
+      "auto_execute_rate": 0.1428,
+      "calibrated_autonomy_score": 0.1428,
+      "human_escalation_rate": -0.1428,
+      "sla_preservation_rate": 0.0
+    }
+  },
+  "diverged_events": [
+    {
+      "actions": {
+        "baseline_static": null,
+        "path_c_warm_agent_visible_memory": "EXPEDITE",
+        "path_c_warm_policy_only": "EXPEDITE"
+      },
+      "adjustment_ref": null,
+      "event_id": "EV-003",
+      "event_index": 3,
+      "modes": [
+        "baseline_static",
+        "path_c_warm_agent_visible_memory",
+        "path_c_warm_policy_only"
+      ],
+      "routes": {
+        "baseline_static": "HUMAN_REQUIRED",
+        "path_c_warm_agent_visible_memory": "AUTO_EXECUTE",
+        "path_c_warm_policy_only": "AUTO_EXECUTE"
+      },
+      "statuses": {
+        "baseline_static": "awaiting_human_review",
+        "path_c_warm_agent_visible_memory": "executed",
+        "path_c_warm_policy_only": "executed"
+      }
+    },
+    {
+      "actions": {
+        "baseline_static": "TRANSFER",
+        "path_c_warm_agent_visible_memory": "COMPENSATE",
+        "path_c_warm_policy_only": "TRANSFER"
+      },
+      "adjustment_ref": null,
+      "event_id": "EV-006",
+      "event_index": 6,
+      "modes": [
+        "baseline_static",
+        "path_c_warm_agent_visible_memory",
+        "path_c_warm_policy_only"
+      ],
+      "routes": {
+        "baseline_static": "AUTO_EXECUTE",
+        "path_c_warm_agent_visible_memory": "AUTO_EXECUTE",
+        "path_c_warm_policy_only": "AUTO_EXECUTE"
+      },
+      "statuses": {
+        "baseline_static": "executed",
+        "path_c_warm_agent_visible_memory": "executed",
+        "path_c_warm_policy_only": "executed"
+      }
+    }
+  ],
+  "kpi_matrix": {
+    "cold_phase": {},
+    "overall": {
+      "auto_execute_rate": {
+        "baseline_static": 0.7143,
+        "path_c_warm_agent_visible_memory": 0.8571,
+        "path_c_warm_policy_only": 0.8571
+      },
+      "avg_cost_per_event": {
+        "baseline_static": 195.71,
+        "path_c_warm_agent_visible_memory": 195.71,
+        "path_c_warm_policy_only": 195.71
+      },
+      "calibrated_autonomy_score": {
+        "baseline_static": 0.7143,
+        "path_c_warm_agent_visible_memory": 0.8571,
+        "path_c_warm_policy_only": 0.8571
+      },
+      "human_escalation_rate": {
+        "baseline_static": 0.2857,
+        "path_c_warm_agent_visible_memory": 0.1429,
+        "path_c_warm_policy_only": 0.1429
+      },
+      "known_outcome_coverage": {
+        "baseline_static": 0.8571,
+        "path_c_warm_agent_visible_memory": 1.0,
+        "path_c_warm_policy_only": 0.8571
+      },
+      "sla_preservation_rate": {
+        "baseline_static": 0.8571,
+        "path_c_warm_agent_visible_memory": 1.0,
+        "path_c_warm_policy_only": 0.8571
+      }
+    },
+    "warm_phase": {}
+  },
+  "min_records_for_shift": 3,
+  "per_session_kpi_report": {},
+  "schema_version": "1.1",
+  "sessions_compared": [
+    "baseline_static",
+    "path_c_warm_agent_visible_memory",
+    "path_c_warm_policy_only"
+  ],
+  "thesis_claim_support": {
+    "claim": "Path C extends calibrated supervision into a temporally adaptive semi-autonomy loop.",
+    "notes": "thesis_claim_support requires a path_c_warm session in the compare; this B4 triplet substitutes it with two PATH_C_WARM variants (policy-only vs agent-visible). No claim determination.",
+    "supports_claim": null,
+    "warm_calibrated_autonomy_delta": null,
+    "warm_cost_delta": null,
+    "warm_sla_preservation_delta": null
+  }
+}

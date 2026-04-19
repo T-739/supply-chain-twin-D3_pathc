@@ -1,0 +1,24 @@
+{
+  "bundle_id": "demo_showcase_default_trio_v1",
+  "bundle_schema_version": "1.0",
+  "has_compare_report": true,
+  "has_thesis_report": true,
+  "produced_by": "0.1.0",
+  "session_ids": {
+    "baseline_static": "DEMO-SHOWCASE-BASELINE_STATIC",
+    "path_c_cold": "DEMO-SHOWCASE-PATH_C_COLD",
+    "path_c_warm": "DEMO-SHOWCASE-PATH_C_WARM"
+  },
+  "source": {
+    "kind": "showcase_builder",
+    "notes": "Curated deterministic demo_showcase bundle. Shapes mirror the canonical session / compare contracts; values are hand-picked to showcase the B5 surface end-to-end.",
+    "origin": "build_default_trio_showcase"
+  },
+  "variant_set": "default_3_mode",
+  "variant_tags": [
+    "baseline_static",
+    "path_c_cold",
+    "path_c_warm"
+  ],
+  "warnings": []
+}

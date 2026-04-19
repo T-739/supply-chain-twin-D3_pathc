@@ -98,7 +98,22 @@ export function BundleSummaryCard() {
   }
 
   if (!detail) {
-    return null;
+    // Never return null here: a disappearing section shifts the
+    // page's h2 order and breaks SSR → CSR hydration for any
+    // sibling that also emits an <h2>. The "has selection, no
+    // detail yet, no error, not isLoading" state only occurs
+    // between mount and the first useEffect tick; treat it as
+    // the same shell as the loading branch above.
+    return (
+      <section
+        className="bundle-summary"
+        data-testid="bundle-summary-loading"
+        aria-label="Selected bundle"
+      >
+        <h2>Selected bundle</h2>
+        <p>Preparing detail view for <code>{selectedBundleId}</code>…</p>
+      </section>
+    );
   }
 
   const { metadata, sessions, load_warnings } = detail;

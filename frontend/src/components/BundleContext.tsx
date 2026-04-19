@@ -93,16 +93,19 @@ export function BundleProvider({
     initialIndex === undefined,
   );
   const [error, setError] = useState<string | null>(null);
-  // When initialSelectedBundleId is explicitly provided (tests),
-  // that wins. Otherwise restore from localStorage if available.
+  // Hydration-safe initial state. localStorage is NOT read here —
+  // the Next.js server has no window, so reading during the state
+  // initializer would make the server commit `null` while the
+  // client commits the stored id, producing a hydration mismatch
+  // (observed on Overview: server "Selected bundle" vs client
+  // "Why the outputs are trustworthy" in the same <h2> slot).
+  //
+  // localStorage restoration happens in an effect below, *after*
+  // hydration. The `initialSelectedBundleId` test seam still wins
+  // when explicitly passed.
   const [selectedBundleId, setSelectedBundleIdState] = useState<
     string | null
-  >(() => {
-    if (initialSelectedBundleId !== undefined) {
-      return initialSelectedBundleId;
-    }
-    return readLocalBundleId();
-  });
+  >(initialSelectedBundleId !== undefined ? initialSelectedBundleId : null);
 
   const setSelectedBundleId = useCallback((bundleId: string | null) => {
     setSelectedBundleIdState(bundleId);
@@ -153,6 +156,30 @@ export function BundleProvider({
     }
     void load();
   }, [initialIndex, load]);
+
+  // Post-hydration localStorage restore. Runs exactly once, after
+  // the first client paint, so the first render matches whatever
+  // the server emitted (always `null` when no test seam is
+  // supplied). If an id is stored, we promote it now; if `load()`
+  // has meanwhile populated `index`, the stored id is validated
+  // against it and dropped if stale.
+  //
+  // Intentionally not in the dependency array: `index` updates
+  // would re-fire this effect and fight the user's manual
+  // selection. The `load()` path already revalidates a stored id
+  // against a fresh index; this effect is only for the
+  // initial-hydration restore.
+  //
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (initialSelectedBundleId !== undefined) return;
+    const stored = readLocalBundleId();
+    if (!stored) return;
+    setSelectedBundleIdState((prev) => {
+      if (prev) return prev;
+      return stored;
+    });
+  }, []);
 
   const selectedEntry = useMemo<BundleIndexEntry | null>(() => {
     if (!index || !selectedBundleId) return null;

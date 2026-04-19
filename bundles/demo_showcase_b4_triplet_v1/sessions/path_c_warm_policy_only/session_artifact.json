@@ -1,0 +1,492 @@
+{
+  "config": {
+    "events_source": "demo_showcase",
+    "initial_memory_digest": "",
+    "mode": "PATH_C_WARM",
+    "schema_version": "1.0",
+    "seed": 42
+  },
+  "event_records": [
+    {
+      "adaptive_adjustment": null,
+      "baseline_event_result": {
+        "event_id": "EV-000",
+        "event_type": "CARRIER_DELAY_ESCALATION",
+        "execution_outcome": {
+          "cost_incurred": 220.0,
+          "sla_impact": {
+            "preserved": true
+          }
+        },
+        "execution_status": "executed",
+        "governance_output": {
+          "rationale_trace": "",
+          "recommended_action": "EXPEDITE",
+          "risk_level": "MEDIUM",
+          "schema_version": "1.0"
+        },
+        "policy_decision": {
+          "action_taken": "EXPEDITE",
+          "final_route": "AUTO_EXECUTE",
+          "schema_version": "1.0"
+        },
+        "scenario_context": {
+          "demo": true,
+          "route_hint": "AUTO_EXECUTE"
+        },
+        "schema_version": "1.0",
+        "severity": "MEDIUM",
+        "trace_log": []
+      },
+      "correlation_context": null,
+      "effective_decision": {
+        "action_taken": "EXPEDITE",
+        "effective_risk": "MEDIUM",
+        "execution_status": "executed",
+        "final_route": "AUTO_EXECUTE",
+        "schema_version": "1.0"
+      },
+      "governance_truth": {
+        "recommended_candidate_type": "EXPEDITE",
+        "risk_level": "MEDIUM",
+        "schema_version": "1.0"
+      },
+      "memory_record_id": null,
+      "mode": "PATH_C_WARM",
+      "notes": "",
+      "policy_route_source": "baseline_static",
+      "replan_trace": null,
+      "replan_triggers": null,
+      "schema_version": "1.2",
+      "session_id": "DEMO-SHOWCASE-B4-PATH_C_WARM_POLICY_ONLY"
+    },
+    {
+      "adaptive_adjustment": null,
+      "baseline_event_result": {
+        "event_id": "EV-001",
+        "event_type": "WAREHOUSE_OVERFLOW",
+        "execution_outcome": {
+          "cost_incurred": 140.0,
+          "sla_impact": {
+            "preserved": true
+          }
+        },
+        "execution_status": "executed",
+        "governance_output": {
+          "rationale_trace": "",
+          "recommended_action": "TRANSFER",
+          "risk_level": "LOW",
+          "schema_version": "1.0"
+        },
+        "policy_decision": {
+          "action_taken": "TRANSFER",
+          "final_route": "AUTO_EXECUTE",
+          "schema_version": "1.0"
+        },
+        "scenario_context": {
+          "demo": true,
+          "route_hint": "AUTO_EXECUTE"
+        },
+        "schema_version": "1.0",
+        "severity": "LOW",
+        "trace_log": []
+      },
+      "correlation_context": null,
+      "effective_decision": {
+        "action_taken": "TRANSFER",
+        "effective_risk": "LOW",
+        "execution_status": "executed",
+        "final_route": "AUTO_EXECUTE",
+        "schema_version": "1.0"
+      },
+      "governance_truth": {
+        "recommended_candidate_type": "TRANSFER",
+        "risk_level": "LOW",
+        "schema_version": "1.0"
+      },
+      "memory_record_id": null,
+      "mode": "PATH_C_WARM",
+      "notes": "",
+      "policy_route_source": "baseline_static",
+      "replan_trace": null,
+      "replan_triggers": null,
+      "schema_version": "1.2",
+      "session_id": "DEMO-SHOWCASE-B4-PATH_C_WARM_POLICY_ONLY"
+    },
+    {
+      "adaptive_adjustment": null,
+      "baseline_event_result": {
+        "event_id": "EV-002",
+        "event_type": "SUPPLIER_DISRUPTION",
+        "execution_outcome": {
+          "cost_incurred": 410.0,
+          "sla_impact": {
+            "preserved": false
+          }
+        },
+        "execution_status": "awaiting_human_review",
+        "governance_output": {
+          "rationale_trace": "",
+          "recommended_action": "COMPENSATE",
+          "risk_level": "HIGH",
+          "schema_version": "1.0"
+        },
+        "policy_decision": {
+          "action_taken": null,
+          "final_route": "HUMAN_REQUIRED",
+          "schema_version": "1.0"
+        },
+        "scenario_context": {
+          "demo": true,
+          "route_hint": "HUMAN_REQUIRED"
+        },
+        "schema_version": "1.0",
+        "severity": "HIGH",
+        "trace_log": []
+      },
+      "correlation_context": null,
+      "effective_decision": {
+        "action_taken": null,
+        "effective_risk": "HIGH",
+        "execution_status": "awaiting_human_review",
+        "final_route": "HUMAN_REQUIRED",
+        "schema_version": "1.0"
+      },
+      "governance_truth": {
+        "recommended_candidate_type": "COMPENSATE",
+        "risk_level": "HIGH",
+        "schema_version": "1.0"
+      },
+      "memory_record_id": null,
+      "mode": "PATH_C_WARM",
+      "notes": "",
+      "policy_route_source": "baseline_static",
+      "replan_trace": null,
+      "replan_triggers": null,
+      "schema_version": "1.2",
+      "session_id": "DEMO-SHOWCASE-B4-PATH_C_WARM_POLICY_ONLY"
+    },
+    {
+      "adaptive_adjustment": {
+        "adjustment_type": "UPGRADE_ONE_LEVEL",
+        "memory_evidence": {
+          "auto_execute_success_rate": 0.88,
+          "matched_records": 8
+        },
+        "notes": "",
+        "post_adjustment_risk": "LOW",
+        "pre_adjustment_risk": "MEDIUM",
+        "query_signature": "sig:CARRIER_DELAY_ESCALATION|MEDIUM|v1",
+        "rule_id": "R-AUTOEXPEDITE-LOW",
+        "schema_version": "1.0"
+      },
+      "baseline_event_result": {
+        "event_id": "EV-003",
+        "event_type": "CARRIER_DELAY_ESCALATION",
+        "execution_outcome": {
+          "cost_incurred": 235.0,
+          "sla_impact": {
+            "preserved": true
+          }
+        },
+        "execution_status": "awaiting_human_review",
+        "governance_output": {
+          "rationale_trace": "",
+          "recommended_action": "EXPEDITE",
+          "risk_level": "MEDIUM",
+          "schema_version": "1.0"
+        },
+        "policy_decision": {
+          "action_taken": null,
+          "final_route": "HUMAN_REQUIRED",
+          "schema_version": "1.0"
+        },
+        "scenario_context": {
+          "demo": true,
+          "route_hint": "HUMAN_REQUIRED"
+        },
+        "schema_version": "1.0",
+        "severity": "MEDIUM",
+        "trace_log": []
+      },
+      "correlation_context": null,
+      "effective_decision": {
+        "action_taken": "EXPEDITE",
+        "effective_risk": "LOW",
+        "execution_status": "executed",
+        "final_route": "AUTO_EXECUTE",
+        "schema_version": "1.0"
+      },
+      "governance_truth": {
+        "recommended_candidate_type": "EXPEDITE",
+        "risk_level": "MEDIUM",
+        "schema_version": "1.0"
+      },
+      "memory_record_id": "MEM-DEMO-SHOWCASE-B4-PATH_C_WARM_POLICY_ONLY-EV-003",
+      "mode": "PATH_C_WARM",
+      "notes": "",
+      "policy_route_source": "adaptive_adjusted",
+      "replan_trace": [
+        {
+          "adaptive_adjustment": null,
+          "attempt_action_taken": "EXPEDITE",
+          "attempt_execution_status": "executed",
+          "attempt_final_route": "AUTO_EXECUTE",
+          "attempt_index": 0,
+          "execution_outcome": {
+            "cost_incurred": 235.0,
+            "sla_impact": {
+              "preserved": true
+            }
+          },
+          "expected_outcome": null,
+          "notes": "",
+          "schema_version": "1.0",
+          "trigger": {
+            "attempt_index": 0,
+            "deviation_measurement": {
+              "abs_delta": 22.0,
+              "rel_delta": 0.1
+            },
+            "expected_outcome_ref": null,
+            "notes": "",
+            "realized_cost": 235.0,
+            "realized_sla_preserved": true,
+            "schema_version": "1.0",
+            "trigger_rule_id": "R1_COST_DEVIATION",
+            "trigger_type": "COST_DEVIATION"
+          }
+        }
+      ],
+      "replan_triggers": [
+        {
+          "attempt_index": 0,
+          "deviation_measurement": {
+            "abs_delta": 22.0,
+            "rel_delta": 0.1
+          },
+          "expected_outcome_ref": null,
+          "notes": "",
+          "realized_cost": 235.0,
+          "realized_sla_preserved": true,
+          "schema_version": "1.0",
+          "trigger_rule_id": "R1_COST_DEVIATION",
+          "trigger_type": "COST_DEVIATION"
+        }
+      ],
+      "schema_version": "1.2",
+      "session_id": "DEMO-SHOWCASE-B4-PATH_C_WARM_POLICY_ONLY"
+    },
+    {
+      "adaptive_adjustment": null,
+      "baseline_event_result": {
+        "event_id": "EV-004",
+        "event_type": "ETA_PATH_REROUTE",
+        "execution_outcome": {
+          "cost_incurred": 175.0,
+          "sla_impact": {
+            "preserved": true
+          }
+        },
+        "execution_status": "executed",
+        "governance_output": {
+          "rationale_trace": "",
+          "recommended_action": "TRANSFER",
+          "risk_level": "MEDIUM",
+          "schema_version": "1.0"
+        },
+        "policy_decision": {
+          "action_taken": "TRANSFER",
+          "final_route": "AUTO_EXECUTE",
+          "schema_version": "1.0"
+        },
+        "scenario_context": {
+          "demo": true,
+          "route_hint": "AUTO_EXECUTE"
+        },
+        "schema_version": "1.0",
+        "severity": "MEDIUM",
+        "trace_log": []
+      },
+      "correlation_context": {
+        "schema_version": "1.0",
+        "signals": [
+          {
+            "matched_conditions": [
+              "SHARED_ETA_PATH"
+            ],
+            "participant_event_ids": [
+              "EV-003",
+              "EV-004"
+            ],
+            "pattern_id": "ETA_PATH_COMPOUND",
+            "schema_version": "1.0",
+            "shared_entities": [],
+            "triggering_event_id": "EV-004",
+            "window_end_ordinal": 4,
+            "window_size": 3,
+            "window_start_ordinal": 3
+          }
+        ],
+        "window_events_considered": 3,
+        "window_size": 3
+      },
+      "effective_decision": {
+        "action_taken": "TRANSFER",
+        "effective_risk": "MEDIUM",
+        "execution_status": "executed",
+        "final_route": "AUTO_EXECUTE",
+        "schema_version": "1.0"
+      },
+      "governance_truth": {
+        "recommended_candidate_type": "TRANSFER",
+        "risk_level": "MEDIUM",
+        "schema_version": "1.0"
+      },
+      "memory_record_id": null,
+      "mode": "PATH_C_WARM",
+      "notes": "",
+      "policy_route_source": "baseline_static",
+      "replan_trace": null,
+      "replan_triggers": null,
+      "schema_version": "1.2",
+      "session_id": "DEMO-SHOWCASE-B4-PATH_C_WARM_POLICY_ONLY"
+    },
+    {
+      "adaptive_adjustment": null,
+      "baseline_event_result": {
+        "event_id": "EV-005",
+        "event_type": "CARRIER_DELAY_ESCALATION",
+        "execution_outcome": {
+          "cost_incurred": 0.0,
+          "sla_impact": {
+            "preserved": true
+          }
+        },
+        "execution_status": "executed",
+        "governance_output": {
+          "rationale_trace": "",
+          "recommended_action": "NO_ACTION",
+          "risk_level": "LOW",
+          "schema_version": "1.0"
+        },
+        "policy_decision": {
+          "action_taken": "NO_ACTION",
+          "final_route": "AUTO_EXECUTE",
+          "schema_version": "1.0"
+        },
+        "scenario_context": {
+          "demo": true,
+          "route_hint": "AUTO_EXECUTE"
+        },
+        "schema_version": "1.0",
+        "severity": "LOW",
+        "trace_log": []
+      },
+      "correlation_context": null,
+      "effective_decision": {
+        "action_taken": "NO_ACTION",
+        "effective_risk": "LOW",
+        "execution_status": "executed",
+        "final_route": "AUTO_EXECUTE",
+        "schema_version": "1.0"
+      },
+      "governance_truth": {
+        "recommended_candidate_type": "NO_ACTION",
+        "risk_level": "LOW",
+        "schema_version": "1.0"
+      },
+      "memory_record_id": null,
+      "mode": "PATH_C_WARM",
+      "notes": "",
+      "policy_route_source": "baseline_static",
+      "replan_trace": null,
+      "replan_triggers": null,
+      "schema_version": "1.2",
+      "session_id": "DEMO-SHOWCASE-B4-PATH_C_WARM_POLICY_ONLY"
+    },
+    {
+      "adaptive_adjustment": null,
+      "baseline_event_result": {
+        "event_id": "EV-006",
+        "event_type": "WAREHOUSE_OVERFLOW",
+        "execution_outcome": {
+          "cost_incurred": 190.0,
+          "sla_impact": {
+            "preserved": true
+          }
+        },
+        "execution_status": "executed",
+        "governance_output": {
+          "rationale_trace": "",
+          "recommended_action": "TRANSFER",
+          "risk_level": "MEDIUM",
+          "schema_version": "1.0"
+        },
+        "policy_decision": {
+          "action_taken": "TRANSFER",
+          "final_route": "AUTO_EXECUTE",
+          "schema_version": "1.0"
+        },
+        "scenario_context": {
+          "demo": true,
+          "route_hint": "AUTO_EXECUTE"
+        },
+        "schema_version": "1.0",
+        "severity": "MEDIUM",
+        "trace_log": []
+      },
+      "correlation_context": null,
+      "effective_decision": {
+        "action_taken": "TRANSFER",
+        "effective_risk": "MEDIUM",
+        "execution_status": "executed",
+        "final_route": "AUTO_EXECUTE",
+        "schema_version": "1.0"
+      },
+      "governance_truth": {
+        "recommended_candidate_type": "TRANSFER",
+        "risk_level": "MEDIUM",
+        "schema_version": "1.0"
+      },
+      "memory_record_id": null,
+      "mode": "PATH_C_WARM",
+      "notes": "",
+      "policy_route_source": "baseline_static",
+      "replan_trace": null,
+      "replan_triggers": null,
+      "schema_version": "1.2",
+      "session_id": "DEMO-SHOWCASE-B4-PATH_C_WARM_POLICY_ONLY"
+    }
+  ],
+  "kpis": {
+    "auto_execute_success_rate": 0.8571,
+    "avg_cost": 195.7143,
+    "events_failed": 0,
+    "events_observed": 7,
+    "events_processed": 7,
+    "events_skipped": 0,
+    "events_with_outcome": 6,
+    "known_outcome_coverage": 0.8571,
+    "replan_events_observed": 1,
+    "replan_fire_count": 1,
+    "replan_recovery_rate": 1.0,
+    "replan_success_count": 1,
+    "replan_trigger_rate": 0.1429,
+    "schema_version": "1.1",
+    "sla_preservation_rate": 0.8571,
+    "total_cost": 1370.0
+  },
+  "memory_snapshot": {
+    "records": []
+  },
+  "notes": "Curated deterministic demo_showcase session artifact. Shapes mirror src/session/session_schema.py; values are hand-picked to showcase the B5 surface.",
+  "schema_version": "1.0",
+  "schema_versions": {
+    "compare_report": "1.1",
+    "session_artifact": "1.0",
+    "session_event_record": "1.2",
+    "session_kpis": "1.1"
+  },
+  "session_id": "DEMO-SHOWCASE-B4-PATH_C_WARM_POLICY_ONLY"
+}

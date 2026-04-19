@@ -1,0 +1,28 @@
+{
+  "bundle_id": "demo_showcase_b4_triplet_v1",
+  "bundle_schema_version": "1.0",
+  "has_compare_report": true,
+  "has_thesis_report": false,
+  "produced_by": "0.1.0",
+  "session_ids": {
+    "baseline_static": "DEMO-SHOWCASE-B4-BASELINE_STATIC",
+    "path_c_warm_agent_visible_memory": "DEMO-SHOWCASE-B4-PATH_C_WARM_AGENT_VISIBLE_MEMORY",
+    "path_c_warm_policy_only": "DEMO-SHOWCASE-B4-PATH_C_WARM_POLICY_ONLY"
+  },
+  "source": {
+    "kind": "showcase_builder",
+    "notes": "Curated deterministic demo_showcase bundle. Shapes mirror the canonical session / compare contracts; values are hand-picked to showcase the B5 surface end-to-end.",
+    "origin": "build_b4_triplet_showcase"
+  },
+  "variant_set": "b4_experiment_triplet",
+  "variant_tags": [
+    "baseline_static",
+    "path_c_warm_policy_only",
+    "path_c_warm_agent_visible_memory"
+  ],
+  "warnings": [
+    "path_c_cold variant intentionally absent (B4 experiment triplet).",
+    "thesis_report.md intentionally omitted.",
+    "B4 agent-visible memory overlay is rendered via the compare report's agent_memory_experiment_summary sibling block only — NOT as a per-event SessionEventRecord overlay."
+  ]
+}

@@ -1,0 +1,867 @@
+{
+  "baseline_mode": "baseline_static",
+  "correlation_summary": {
+    "all_correlated_event_ids": [
+      "EV-004"
+    ],
+    "overall_pattern_counts": {
+      "ETA_PATH_COMPOUND": 2
+    },
+    "per_session": {
+      "path_c_cold": {
+        "correlated_event_ids": [
+          "EV-004"
+        ],
+        "events_with_context": 1,
+        "events_with_signals": 1,
+        "pattern_counts": {
+          "ETA_PATH_COMPOUND": 1
+        },
+        "signals_by_event": [],
+        "total_signals": 1
+      },
+      "path_c_warm": {
+        "correlated_event_ids": [
+          "EV-004"
+        ],
+        "events_with_context": 1,
+        "events_with_signals": 1,
+        "pattern_counts": {
+          "ETA_PATH_COMPOUND": 1
+        },
+        "signals_by_event": [],
+        "total_signals": 1
+      }
+    },
+    "sessions_with_correlation_data": [
+      "path_c_cold",
+      "path_c_warm"
+    ]
+  },
+  "cumulative_memory_summary": {
+    "all_prior_session_refs": [
+      "PRIOR-SESSION-A",
+      "PRIOR-SESSION-B"
+    ],
+    "overall_rows_by_prior_session": {
+      "PRIOR-SESSION-A": 2,
+      "PRIOR-SESSION-B": 1
+    },
+    "per_session": {
+      "path_c_warm": {
+        "cumulative_row_count": 3,
+        "current_session_id": "DEMO-SHOWCASE-PATH_C_WARM",
+        "has_cumulative_memory": true,
+        "prior_session_refs": [
+          "PRIOR-SESSION-A",
+          "PRIOR-SESSION-B"
+        ],
+        "rows_by_prior_session": {
+          "PRIOR-SESSION-A": 2,
+          "PRIOR-SESSION-B": 1
+        },
+        "self_session_row_count": 2
+      }
+    },
+    "sessions_with_cumulative_memory": [
+      "path_c_warm"
+    ]
+  },
+  "deltas": {
+    "path_c_cold_minus_baseline_static": {
+      "auto_execute_rate": 0.0,
+      "avg_cost_per_event": 0.0,
+      "calibrated_autonomy_score": 0.0,
+      "human_escalation_rate": 0.0,
+      "known_outcome_coverage": 0.0,
+      "sla_preservation_rate": 0.0
+    },
+    "path_c_warm_minus_baseline_static": {
+      "auto_execute_rate": 0.1428,
+      "avg_cost_per_event": 0.0,
+      "calibrated_autonomy_score": 0.1428,
+      "human_escalation_rate": -0.1428,
+      "known_outcome_coverage": 0.1429,
+      "sla_preservation_rate": 0.1429
+    }
+  },
+  "diverged_events": [
+    {
+      "actions": {
+        "baseline_static": null,
+        "path_c_cold": null,
+        "path_c_warm": "EXPEDITE"
+      },
+      "adjustment_ref": {
+        "adjustment_type": "UPGRADE_ONE_LEVEL",
+        "memory_evidence": {
+          "auto_execute_success_rate": 0.88,
+          "matched_records": 8
+        },
+        "notes": "",
+        "post_adjustment_risk": "LOW",
+        "pre_adjustment_risk": "MEDIUM",
+        "query_signature": "sig:CARRIER_DELAY_ESCALATION|MEDIUM|v1",
+        "rule_id": "R-AUTOEXPEDITE-LOW",
+        "schema_version": "1.0"
+      },
+      "event_id": "EV-003",
+      "event_index": 3,
+      "modes": [
+        "baseline_static",
+        "path_c_cold",
+        "path_c_warm"
+      ],
+      "routes": {
+        "baseline_static": "HUMAN_REQUIRED",
+        "path_c_cold": "HUMAN_REQUIRED",
+        "path_c_warm": "AUTO_EXECUTE"
+      },
+      "statuses": {
+        "baseline_static": "awaiting_human_review",
+        "path_c_cold": "awaiting_human_review",
+        "path_c_warm": "executed"
+      }
+    }
+  ],
+  "kpi_matrix": {
+    "cold_phase": {
+      "auto_execute_rate": {
+        "baseline_static": 0.6667,
+        "path_c_cold": 0.6667,
+        "path_c_warm": 0.6667
+      },
+      "avg_cost_per_event": {
+        "baseline_static": 256.67,
+        "path_c_cold": 256.67,
+        "path_c_warm": 256.67
+      },
+      "calibrated_autonomy_score": {
+        "baseline_static": 0.6667,
+        "path_c_cold": 0.6667,
+        "path_c_warm": 0.6667
+      },
+      "events_failed": {
+        "baseline_static": 0,
+        "path_c_cold": 0,
+        "path_c_warm": 0
+      },
+      "events_observed": {
+        "baseline_static": 3,
+        "path_c_cold": 3,
+        "path_c_warm": 3
+      },
+      "events_processed": {
+        "baseline_static": 3,
+        "path_c_cold": 3,
+        "path_c_warm": 3
+      },
+      "events_skipped": {
+        "baseline_static": 0,
+        "path_c_cold": 0,
+        "path_c_warm": 0
+      },
+      "events_with_outcome": {
+        "baseline_static": 2,
+        "path_c_cold": 2,
+        "path_c_warm": 2
+      },
+      "human_escalation_rate": {
+        "baseline_static": 0.3333,
+        "path_c_cold": 0.3333,
+        "path_c_warm": 0.3333
+      },
+      "known_outcome_coverage": {
+        "baseline_static": 0.6667,
+        "path_c_cold": 0.6667,
+        "path_c_warm": 0.6667
+      },
+      "sla_preservation_rate": {
+        "baseline_static": 0.6667,
+        "path_c_cold": 0.6667,
+        "path_c_warm": 0.6667
+      }
+    },
+    "overall": {
+      "auto_execute_rate": {
+        "baseline_static": 0.7143,
+        "path_c_cold": 0.7143,
+        "path_c_warm": 0.8571
+      },
+      "avg_cost_per_event": {
+        "baseline_static": 195.71,
+        "path_c_cold": 195.71,
+        "path_c_warm": 195.71
+      },
+      "calibrated_autonomy_score": {
+        "baseline_static": 0.7143,
+        "path_c_cold": 0.7143,
+        "path_c_warm": 0.8571
+      },
+      "events_failed": {
+        "baseline_static": 0,
+        "path_c_cold": 0,
+        "path_c_warm": 0
+      },
+      "events_observed": {
+        "baseline_static": 7,
+        "path_c_cold": 7,
+        "path_c_warm": 7
+      },
+      "events_processed": {
+        "baseline_static": 7,
+        "path_c_cold": 7,
+        "path_c_warm": 7
+      },
+      "events_skipped": {
+        "baseline_static": 0,
+        "path_c_cold": 0,
+        "path_c_warm": 0
+      },
+      "events_with_outcome": {
+        "baseline_static": 6,
+        "path_c_cold": 6,
+        "path_c_warm": 7
+      },
+      "human_escalation_rate": {
+        "baseline_static": 0.2857,
+        "path_c_cold": 0.2857,
+        "path_c_warm": 0.1429
+      },
+      "known_outcome_coverage": {
+        "baseline_static": 0.8571,
+        "path_c_cold": 0.8571,
+        "path_c_warm": 1.0
+      },
+      "sla_preservation_rate": {
+        "baseline_static": 0.8571,
+        "path_c_cold": 0.8571,
+        "path_c_warm": 1.0
+      }
+    },
+    "warm_phase": {
+      "auto_execute_rate": {
+        "baseline_static": 0.75,
+        "path_c_cold": 0.75,
+        "path_c_warm": 1.0
+      },
+      "avg_cost_per_event": {
+        "baseline_static": 150.0,
+        "path_c_cold": 150.0,
+        "path_c_warm": 150.0
+      },
+      "calibrated_autonomy_score": {
+        "baseline_static": 0.75,
+        "path_c_cold": 0.75,
+        "path_c_warm": 1.0
+      },
+      "events_failed": {
+        "baseline_static": 0,
+        "path_c_cold": 0,
+        "path_c_warm": 0
+      },
+      "events_observed": {
+        "baseline_static": 4,
+        "path_c_cold": 4,
+        "path_c_warm": 4
+      },
+      "events_processed": {
+        "baseline_static": 4,
+        "path_c_cold": 4,
+        "path_c_warm": 4
+      },
+      "events_skipped": {
+        "baseline_static": 0,
+        "path_c_cold": 0,
+        "path_c_warm": 0
+      },
+      "events_with_outcome": {
+        "baseline_static": 4,
+        "path_c_cold": 4,
+        "path_c_warm": 4
+      },
+      "human_escalation_rate": {
+        "baseline_static": 0.25,
+        "path_c_cold": 0.25,
+        "path_c_warm": 0.0
+      },
+      "known_outcome_coverage": {
+        "baseline_static": 1.0,
+        "path_c_cold": 1.0,
+        "path_c_warm": 1.0
+      },
+      "sla_preservation_rate": {
+        "baseline_static": 1.0,
+        "path_c_cold": 1.0,
+        "path_c_warm": 1.0
+      }
+    }
+  },
+  "min_records_for_shift": 3,
+  "per_session_kpi_report": {
+    "baseline_static": {
+      "cold_phase": {
+        "auto_execute_rate": {
+          "baseline_static": 0.6667,
+          "path_c_cold": 0.6667,
+          "path_c_warm": 0.6667
+        },
+        "avg_cost_per_event": {
+          "baseline_static": 256.67,
+          "path_c_cold": 256.67,
+          "path_c_warm": 256.67
+        },
+        "calibrated_autonomy_score": {
+          "baseline_static": 0.6667,
+          "path_c_cold": 0.6667,
+          "path_c_warm": 0.6667
+        },
+        "events_failed": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_observed": {
+          "baseline_static": 3,
+          "path_c_cold": 3,
+          "path_c_warm": 3
+        },
+        "events_processed": {
+          "baseline_static": 3,
+          "path_c_cold": 3,
+          "path_c_warm": 3
+        },
+        "events_skipped": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_with_outcome": {
+          "baseline_static": 2,
+          "path_c_cold": 2,
+          "path_c_warm": 2
+        },
+        "human_escalation_rate": {
+          "baseline_static": 0.3333,
+          "path_c_cold": 0.3333,
+          "path_c_warm": 0.3333
+        },
+        "known_outcome_coverage": {
+          "baseline_static": 0.6667,
+          "path_c_cold": 0.6667,
+          "path_c_warm": 0.6667
+        },
+        "sla_preservation_rate": {
+          "baseline_static": 0.6667,
+          "path_c_cold": 0.6667,
+          "path_c_warm": 0.6667
+        }
+      },
+      "overall": {
+        "auto_execute_rate": {
+          "baseline_static": 0.7143,
+          "path_c_cold": 0.7143,
+          "path_c_warm": 0.8571
+        },
+        "avg_cost_per_event": {
+          "baseline_static": 195.71,
+          "path_c_cold": 195.71,
+          "path_c_warm": 195.71
+        },
+        "calibrated_autonomy_score": {
+          "baseline_static": 0.7143,
+          "path_c_cold": 0.7143,
+          "path_c_warm": 0.8571
+        },
+        "events_failed": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_observed": {
+          "baseline_static": 7,
+          "path_c_cold": 7,
+          "path_c_warm": 7
+        },
+        "events_processed": {
+          "baseline_static": 7,
+          "path_c_cold": 7,
+          "path_c_warm": 7
+        },
+        "events_skipped": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_with_outcome": {
+          "baseline_static": 6,
+          "path_c_cold": 6,
+          "path_c_warm": 7
+        },
+        "human_escalation_rate": {
+          "baseline_static": 0.2857,
+          "path_c_cold": 0.2857,
+          "path_c_warm": 0.1429
+        },
+        "known_outcome_coverage": {
+          "baseline_static": 0.8571,
+          "path_c_cold": 0.8571,
+          "path_c_warm": 1.0
+        },
+        "sla_preservation_rate": {
+          "baseline_static": 0.8571,
+          "path_c_cold": 0.8571,
+          "path_c_warm": 1.0
+        }
+      },
+      "warm_phase": {
+        "auto_execute_rate": {
+          "baseline_static": 0.75,
+          "path_c_cold": 0.75,
+          "path_c_warm": 1.0
+        },
+        "avg_cost_per_event": {
+          "baseline_static": 150.0,
+          "path_c_cold": 150.0,
+          "path_c_warm": 150.0
+        },
+        "calibrated_autonomy_score": {
+          "baseline_static": 0.75,
+          "path_c_cold": 0.75,
+          "path_c_warm": 1.0
+        },
+        "events_failed": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_observed": {
+          "baseline_static": 4,
+          "path_c_cold": 4,
+          "path_c_warm": 4
+        },
+        "events_processed": {
+          "baseline_static": 4,
+          "path_c_cold": 4,
+          "path_c_warm": 4
+        },
+        "events_skipped": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_with_outcome": {
+          "baseline_static": 4,
+          "path_c_cold": 4,
+          "path_c_warm": 4
+        },
+        "human_escalation_rate": {
+          "baseline_static": 0.25,
+          "path_c_cold": 0.25,
+          "path_c_warm": 0.0
+        },
+        "known_outcome_coverage": {
+          "baseline_static": 1.0,
+          "path_c_cold": 1.0,
+          "path_c_warm": 1.0
+        },
+        "sla_preservation_rate": {
+          "baseline_static": 1.0,
+          "path_c_cold": 1.0,
+          "path_c_warm": 1.0
+        }
+      }
+    },
+    "path_c_cold": {
+      "cold_phase": {
+        "auto_execute_rate": {
+          "baseline_static": 0.6667,
+          "path_c_cold": 0.6667,
+          "path_c_warm": 0.6667
+        },
+        "avg_cost_per_event": {
+          "baseline_static": 256.67,
+          "path_c_cold": 256.67,
+          "path_c_warm": 256.67
+        },
+        "calibrated_autonomy_score": {
+          "baseline_static": 0.6667,
+          "path_c_cold": 0.6667,
+          "path_c_warm": 0.6667
+        },
+        "events_failed": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_observed": {
+          "baseline_static": 3,
+          "path_c_cold": 3,
+          "path_c_warm": 3
+        },
+        "events_processed": {
+          "baseline_static": 3,
+          "path_c_cold": 3,
+          "path_c_warm": 3
+        },
+        "events_skipped": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_with_outcome": {
+          "baseline_static": 2,
+          "path_c_cold": 2,
+          "path_c_warm": 2
+        },
+        "human_escalation_rate": {
+          "baseline_static": 0.3333,
+          "path_c_cold": 0.3333,
+          "path_c_warm": 0.3333
+        },
+        "known_outcome_coverage": {
+          "baseline_static": 0.6667,
+          "path_c_cold": 0.6667,
+          "path_c_warm": 0.6667
+        },
+        "sla_preservation_rate": {
+          "baseline_static": 0.6667,
+          "path_c_cold": 0.6667,
+          "path_c_warm": 0.6667
+        }
+      },
+      "overall": {
+        "auto_execute_rate": {
+          "baseline_static": 0.7143,
+          "path_c_cold": 0.7143,
+          "path_c_warm": 0.8571
+        },
+        "avg_cost_per_event": {
+          "baseline_static": 195.71,
+          "path_c_cold": 195.71,
+          "path_c_warm": 195.71
+        },
+        "calibrated_autonomy_score": {
+          "baseline_static": 0.7143,
+          "path_c_cold": 0.7143,
+          "path_c_warm": 0.8571
+        },
+        "events_failed": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_observed": {
+          "baseline_static": 7,
+          "path_c_cold": 7,
+          "path_c_warm": 7
+        },
+        "events_processed": {
+          "baseline_static": 7,
+          "path_c_cold": 7,
+          "path_c_warm": 7
+        },
+        "events_skipped": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_with_outcome": {
+          "baseline_static": 6,
+          "path_c_cold": 6,
+          "path_c_warm": 7
+        },
+        "human_escalation_rate": {
+          "baseline_static": 0.2857,
+          "path_c_cold": 0.2857,
+          "path_c_warm": 0.1429
+        },
+        "known_outcome_coverage": {
+          "baseline_static": 0.8571,
+          "path_c_cold": 0.8571,
+          "path_c_warm": 1.0
+        },
+        "sla_preservation_rate": {
+          "baseline_static": 0.8571,
+          "path_c_cold": 0.8571,
+          "path_c_warm": 1.0
+        }
+      },
+      "warm_phase": {
+        "auto_execute_rate": {
+          "baseline_static": 0.75,
+          "path_c_cold": 0.75,
+          "path_c_warm": 1.0
+        },
+        "avg_cost_per_event": {
+          "baseline_static": 150.0,
+          "path_c_cold": 150.0,
+          "path_c_warm": 150.0
+        },
+        "calibrated_autonomy_score": {
+          "baseline_static": 0.75,
+          "path_c_cold": 0.75,
+          "path_c_warm": 1.0
+        },
+        "events_failed": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_observed": {
+          "baseline_static": 4,
+          "path_c_cold": 4,
+          "path_c_warm": 4
+        },
+        "events_processed": {
+          "baseline_static": 4,
+          "path_c_cold": 4,
+          "path_c_warm": 4
+        },
+        "events_skipped": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_with_outcome": {
+          "baseline_static": 4,
+          "path_c_cold": 4,
+          "path_c_warm": 4
+        },
+        "human_escalation_rate": {
+          "baseline_static": 0.25,
+          "path_c_cold": 0.25,
+          "path_c_warm": 0.0
+        },
+        "known_outcome_coverage": {
+          "baseline_static": 1.0,
+          "path_c_cold": 1.0,
+          "path_c_warm": 1.0
+        },
+        "sla_preservation_rate": {
+          "baseline_static": 1.0,
+          "path_c_cold": 1.0,
+          "path_c_warm": 1.0
+        }
+      }
+    },
+    "path_c_warm": {
+      "cold_phase": {
+        "auto_execute_rate": {
+          "baseline_static": 0.6667,
+          "path_c_cold": 0.6667,
+          "path_c_warm": 0.6667
+        },
+        "avg_cost_per_event": {
+          "baseline_static": 256.67,
+          "path_c_cold": 256.67,
+          "path_c_warm": 256.67
+        },
+        "calibrated_autonomy_score": {
+          "baseline_static": 0.6667,
+          "path_c_cold": 0.6667,
+          "path_c_warm": 0.6667
+        },
+        "events_failed": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_observed": {
+          "baseline_static": 3,
+          "path_c_cold": 3,
+          "path_c_warm": 3
+        },
+        "events_processed": {
+          "baseline_static": 3,
+          "path_c_cold": 3,
+          "path_c_warm": 3
+        },
+        "events_skipped": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_with_outcome": {
+          "baseline_static": 2,
+          "path_c_cold": 2,
+          "path_c_warm": 2
+        },
+        "human_escalation_rate": {
+          "baseline_static": 0.3333,
+          "path_c_cold": 0.3333,
+          "path_c_warm": 0.3333
+        },
+        "known_outcome_coverage": {
+          "baseline_static": 0.6667,
+          "path_c_cold": 0.6667,
+          "path_c_warm": 0.6667
+        },
+        "sla_preservation_rate": {
+          "baseline_static": 0.6667,
+          "path_c_cold": 0.6667,
+          "path_c_warm": 0.6667
+        }
+      },
+      "overall": {
+        "auto_execute_rate": {
+          "baseline_static": 0.7143,
+          "path_c_cold": 0.7143,
+          "path_c_warm": 0.8571
+        },
+        "avg_cost_per_event": {
+          "baseline_static": 195.71,
+          "path_c_cold": 195.71,
+          "path_c_warm": 195.71
+        },
+        "calibrated_autonomy_score": {
+          "baseline_static": 0.7143,
+          "path_c_cold": 0.7143,
+          "path_c_warm": 0.8571
+        },
+        "events_failed": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_observed": {
+          "baseline_static": 7,
+          "path_c_cold": 7,
+          "path_c_warm": 7
+        },
+        "events_processed": {
+          "baseline_static": 7,
+          "path_c_cold": 7,
+          "path_c_warm": 7
+        },
+        "events_skipped": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_with_outcome": {
+          "baseline_static": 6,
+          "path_c_cold": 6,
+          "path_c_warm": 7
+        },
+        "human_escalation_rate": {
+          "baseline_static": 0.2857,
+          "path_c_cold": 0.2857,
+          "path_c_warm": 0.1429
+        },
+        "known_outcome_coverage": {
+          "baseline_static": 0.8571,
+          "path_c_cold": 0.8571,
+          "path_c_warm": 1.0
+        },
+        "sla_preservation_rate": {
+          "baseline_static": 0.8571,
+          "path_c_cold": 0.8571,
+          "path_c_warm": 1.0
+        }
+      },
+      "warm_phase": {
+        "auto_execute_rate": {
+          "baseline_static": 0.75,
+          "path_c_cold": 0.75,
+          "path_c_warm": 1.0
+        },
+        "avg_cost_per_event": {
+          "baseline_static": 150.0,
+          "path_c_cold": 150.0,
+          "path_c_warm": 150.0
+        },
+        "calibrated_autonomy_score": {
+          "baseline_static": 0.75,
+          "path_c_cold": 0.75,
+          "path_c_warm": 1.0
+        },
+        "events_failed": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_observed": {
+          "baseline_static": 4,
+          "path_c_cold": 4,
+          "path_c_warm": 4
+        },
+        "events_processed": {
+          "baseline_static": 4,
+          "path_c_cold": 4,
+          "path_c_warm": 4
+        },
+        "events_skipped": {
+          "baseline_static": 0,
+          "path_c_cold": 0,
+          "path_c_warm": 0
+        },
+        "events_with_outcome": {
+          "baseline_static": 4,
+          "path_c_cold": 4,
+          "path_c_warm": 4
+        },
+        "human_escalation_rate": {
+          "baseline_static": 0.25,
+          "path_c_cold": 0.25,
+          "path_c_warm": 0.0
+        },
+        "known_outcome_coverage": {
+          "baseline_static": 1.0,
+          "path_c_cold": 1.0,
+          "path_c_warm": 1.0
+        },
+        "sla_preservation_rate": {
+          "baseline_static": 1.0,
+          "path_c_cold": 1.0,
+          "path_c_warm": 1.0
+        }
+      }
+    }
+  },
+  "replan_trace_summary": {
+    "by_mode": {
+      "path_c_warm": {
+        "events_with_trace": 1,
+        "recovered_events": 1,
+        "replan_kpis_overall": {
+          "replan_events_observed": 1,
+          "replan_fire_count": 1,
+          "replan_recovery_rate": 1.0,
+          "replan_success_count": 1,
+          "replan_trigger_rate": 0.1429
+        }
+      }
+    },
+    "recovered_events_count": {
+      "path_c_warm": 1
+    },
+    "sessions_with_replan": [
+      "path_c_warm"
+    ],
+    "total_replan_events": 1,
+    "trigger_type_counts": {
+      "path_c_warm": {
+        "COST_DEVIATION": 1,
+        "EXECUTION_FAILED": 0,
+        "NO_TRIGGER": 0,
+        "PREFLIGHT_FAILED": 0,
+        "SLA_DEVIATION": 0
+      }
+    }
+  },
+  "schema_version": "1.1",
+  "sessions_compared": [
+    "baseline_static",
+    "path_c_cold",
+    "path_c_warm"
+  ],
+  "thesis_claim_support": {
+    "claim": "Path C extends calibrated supervision into a temporally adaptive semi-autonomy loop.",
+    "notes": "Warm session matches or exceeds baseline on SLA and calibrated autonomy with non-increasing cost.",
+    "supports_claim": true,
+    "warm_calibrated_autonomy_delta": 0.1428,
+    "warm_cost_delta": 0.0,
+    "warm_sla_preservation_delta": 0.1429
+  }
+}
