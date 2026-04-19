@@ -1,0 +1,7 @@
+# B5 BFF runtime dependencies.
+# Pinned loosely — the surface is GET-only and the contract is
+# structurally stable, so any matching minor release of these
+# libraries is acceptable for a local demo bring-up.
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30,<1
+pydantic>=2.10,<3

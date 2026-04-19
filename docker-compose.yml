@@ -1,0 +1,64 @@
+# B5 local-demo compose — two services, one read-only mount.
+#
+# Not hardened for production. Objective: one command brings
+# the full read-only B5 surface up on the developer's laptop
+# for a demo or handoff.
+#
+# Bring up:
+#     docker compose up --build
+#
+# Expected URLs after startup:
+#     frontend: http://localhost:3000
+#     BFF:      http://localhost:8001        (GET-only)
+#     BFF health: http://localhost:8001/healthz
+#     BFF index:  http://localhost:8001/bundles
+#
+# The bundles directory is bind-mounted read-only into the BFF
+# container so the host's `bundles/` stays authoritative — add
+# or regenerate bundles on the host (see tools/bundler) and
+# they appear in the BFF on the next request without rebuild.
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: b5-backend:local
+    container_name: b5-backend
+    environment:
+      - B5_BUNDLES_ROOT=/app/bundles
+    volumes:
+      - ./bundles:/app/bundles:ro
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "python -c 'import urllib.request as u, sys; sys.exit(0 if u.urlopen(\"http://127.0.0.1:8001/healthz\").status == 200 else 1)'",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    image: b5-frontend:local
+    container_name: b5-frontend
+    environment:
+      # next.config.js rewrites /api/bff/* to this URL. The
+      # compose service name `backend` resolves on the default
+      # compose network; no CORS setup is needed.
+      - B5_BFF_BASE_URL=http://backend:8001
+      - NEXT_TELEMETRY_DISABLED=1
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped

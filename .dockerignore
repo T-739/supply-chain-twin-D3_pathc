@@ -1,0 +1,21 @@
+# Root .dockerignore — applies to every build context that
+# references the repo root. Each service's Dockerfile copies
+# only what it needs (backend/ or frontend/), so this list is
+# mostly about keeping the build context small.
+
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/.vitest-cache/
+**/node_modules/
+**/.next/
+**/out/
+**/.DS_Store
+.git/
+.ipynb_checkpoints/
+.Rhistory
+.claude/
+
+# Large appendix docs — not needed for container build.
+*.pdf
+*.docx

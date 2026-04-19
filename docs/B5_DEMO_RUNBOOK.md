@@ -6,7 +6,30 @@ committed fixture bundles so no harness run is required.
 
 ## Pre-demo
 
-Bring up the stack (two terminals):
+Two supported bring-up paths. Either works for the runbook
+below; pick whichever fits the machine.
+
+### Option A — Docker Compose (one command)
+
+```bash
+docker compose up --build
+```
+
+Builds the two local-demo images the first time, then starts:
+
+- frontend → <http://localhost:3000>
+- BFF (GET-only) → <http://localhost:8001>
+
+The `bundles/` directory on the host is bind-mounted read-only
+into the BFF container, so any bundles you generate on the host
+(fixture, showcase, or a future harness run) appear in the app
+on the next request without rebuilding. Stop the stack with
+`Ctrl-C` or `docker compose down`.
+
+See the **Deployment** section at the end of this runbook for
+configuration details and validation steps.
+
+### Option B — local processes (two terminals)
 
 ```bash
 # terminal 1 — B5 BFF (GET-only, port 8001)
@@ -18,8 +41,8 @@ npm install   # first time only
 npm run dev
 ```
 
-Open http://localhost:3000 in a browser. The root redirects to
-`/overview`.
+Open <http://localhost:3000> in a browser. The root redirects
+to `/overview`.
 
 ## Recommended demo bundle map
 
@@ -224,3 +247,107 @@ B4 into a normal per-event layer. And nothing assumes
 
 **Close with:** "Five tabs, one read-only surface, one bundle
 contract, zero runtime assumptions."
+
+---
+
+## Deployment (minimal local compose)
+
+A small Docker Compose setup ships in the repo root for
+one-command local bring-up. It is explicitly for local demo
+/ handoff, **not** production hardening — no TLS, no auth, no
+horizontal scale, no database (there isn't one), no logging
+stack.
+
+### Files
+
+| File | Role |
+|---|---|
+| `docker-compose.yml`    | Two services: `backend` (BFF) and `frontend` (Next.js). |
+| `backend/Dockerfile`    | Python 3.12 + pinned BFF deps; runs `uvicorn backend.app:app`. |
+| `backend/requirements.txt` | Pinned `fastapi`, `uvicorn[standard]`, `pydantic`. |
+| `frontend/Dockerfile`   | Two-stage Node 20: `npm ci` + `npm run build`, then `next start`. |
+| `.dockerignore` + per-dir `.dockerignore` | Keep build contexts small. |
+
+### Bring up
+
+```bash
+docker compose up --build
+```
+
+First run takes a few minutes (npm ci + next build). Subsequent
+runs start in seconds.
+
+### Expected local URLs
+
+| URL | Served by |
+|---|---|
+| <http://localhost:3000>               | frontend shell (redirects to `/overview`) |
+| <http://localhost:3000/overview>      | Overview tab |
+| <http://localhost:3000/session-runtime> | Session Runtime tab |
+| <http://localhost:3000/compare-lab>   | Compare Lab tab |
+| <http://localhost:3000/advanced-lenses> | Advanced Lenses tab |
+| <http://localhost:3000/legacy-v2>     | Legacy V2 appendix |
+| <http://localhost:8001/healthz>       | BFF health probe |
+| <http://localhost:8001/bundles>       | Bundle index (JSON) |
+
+The frontend proxies every `/api/bff/*` request to the backend
+service over the compose network, so no CORS config is required.
+
+### Required env vars
+
+Both services run with sane defaults; the compose file sets
+what matters. Override with `docker compose --env-file …` or
+`docker compose -e VAR=…` if needed.
+
+| Var | Default | Role |
+|---|---|---|
+| `B5_BUNDLES_ROOT` | `/app/bundles` (in container) | Path the BFF scans for `bundles/{bundle_id}/` trees. Compose bind-mounts the host `./bundles/` here read-only. |
+| `B5_BFF_BASE_URL` | `http://backend:8001` (in container) | Target for the Next.js `/api/bff/*` rewrite. Override to point the frontend at a BFF elsewhere. |
+
+### Bundles
+
+The BFF reads bundles from `/app/bundles` in-container, which is
+a read-only bind mount of the host's `bundles/` directory. Add
+bundles on the host (`tools/bundler/showcase_builder.py`,
+`tools/bundler/fixture_builder.py`, or a real harness run +
+`tools/bundler/__main__.py`) and they become visible to the BFF
+on the next HTTP request — no container rebuild required.
+
+### Validation
+
+```bash
+# 1. stack comes up cleanly
+docker compose up --build -d
+docker compose ps            # both services: "Up" / healthy
+
+# 2. BFF surface responds
+curl -s http://localhost:8001/healthz        # {"status":"ok", …}
+curl -s http://localhost:8001/bundles | jq '.bundles | length'
+                                             # >= 1 on a populated repo
+
+# 3. frontend shell responds
+curl -sI http://localhost:3000 | head -n1    # 200 OK (after redirect)
+curl -s http://localhost:3000/overview | head -n5
+                                             # HTML with <html lang="en">
+
+# 4. write-path rejection (belt-and-suspenders)
+curl -s -o /dev/null -w '%{http_code}\n' \
+    -X POST http://localhost:8001/bundles    # 405 (or 404)
+
+# 5. stop
+docker compose down
+```
+
+### Deployment remains read-only and GET-only
+
+- No write routes are exposed. The route-scan guard in
+  [`backend/tests/test_route_scan_get_only.py`](../backend/tests/test_route_scan_get_only.py)
+  fails if any non-GET method is ever registered; the compose
+  image is built from that same codebase.
+- The bundles directory is mounted with `:ro`, so even if the
+  BFF process attempted a write it would fail at the
+  filesystem layer.
+- Both containers run as a non-root user.
+- No database, no secrets, no admin / refresh / generation
+  route. Updating the surface = regenerating a bundle on the
+  host; there is no in-app mutation path.
