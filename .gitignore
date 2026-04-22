@@ -1,7 +1,28 @@
+# macOS
 .DS_Store
+
+# Python
 __pycache__/
 *.pyc
-*.pyo
-~$*.docx
+.venv/
+venv/
+.env
 
+# Node / Next.js
+node_modules/
+frontend/node_modules/
+.next/
+frontend/.next/
+out/
+dist/
+coverage/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# TypeScript build cache
 *.tsbuildinfo
